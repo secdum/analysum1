@@ -1,0 +1,26 @@
+name: Self-hosted test
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-runner:
+    runs-on: [self-hosted, linux, x64, docker-runner]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Show system info
+        run: |
+          echo "Runner OK"
+          uname -a
+          whoami
+          pwd
+
+      - name: Run basic script
+        run: |
+          echo "Hello from self-hosted runner"
+          ls -la
