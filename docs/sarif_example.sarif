@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "Cppcheck",
+          "informationUri": "https://github.com/secdum/analysum",
+          "rules": [
+            {
+              "id": "C-BUFFER-OVERFLOW",
+              "shortDescription": { "text": "Potential Buffer Overflow detected." }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "C-BUFFER-OVERFLOW",
+          "level": "error",
+          "message": { "text": "Insecure function use detected." },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": { "uri": "src/main.c" },
+                "region": { "startLine": 42 }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
