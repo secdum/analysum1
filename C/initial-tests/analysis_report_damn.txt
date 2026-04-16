@@ -1,0 +1,56 @@
+======================================================================
+SECURITY ANALYSIS SUMMARY
+======================================================================
+
+Total Findings: 325
+
+Distribution by Unified Severity:
+  CRITICAL    :   20
+  HIGH        :    0
+  MEDIUM      :   52
+  LOW         :  211
+  INFO        :   42
+
+Distribution by Tool:
+  cppcheck    :  191
+  flawfinder  :  134
+
+Top 10 CWEs:
+   1. CWE-563     :   55
+   2. CWE-476     :   50
+   3. CWE-398     :   17
+   4. CWE-457     :   10
+   5. CWE-571     :    3
+   6. CWE-415     :    3
+   7. CWE-416     :    3
+   8. CWE-401     :    3
+   9. CWE-686     :    2
+  10. CWE-758     :    1
+
+Top 5 Critical Findings:
+  1. [cppcheck] legacyUninitvar
+     File: dvcp.c:90
+     Uninitialized variable: buff3
+     CWE: CWE-457
+
+  2. [cppcheck] legacyUninitvar
+     File: imgRead.c:90
+     Uninitialized variable: buff3
+     CWE: CWE-457
+
+  3. [cppcheck] legacyUninitvar
+     File: libAFL/damn_vulnerable_c_program_git/imgRead.c:84
+     Uninitialized variable: buff3
+     CWE: CWE-457
+
+  4. [cppcheck] doubleFree
+     File: libAFL/damn_vulnerable_c_program_shmem/imgRead.c:56
+     Memory pointed to by 'buff1' is freed twice.
+     CWE: CWE-415
+
+  5. [cppcheck] deallocuse
+     File: libAFL/damn_vulnerable_c_program_shmem/imgRead.c:61
+     Dereferencing 'buff1' after it is deallocated / released
+     CWE: CWE-416
+
+======================================================================
