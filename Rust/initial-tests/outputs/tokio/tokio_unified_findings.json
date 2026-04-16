@@ -1,0 +1,116 @@
+[
+  {
+    "repo": "tokio",
+    "tool": "cargo-geiger",
+    "category": "unsafe_usage",
+    "target": "x",
+    "file": "N/A",
+    "line": 0,
+    "rule_id": "unsafe-usage",
+    "message": "x = unsafe code used by the build",
+    "raw_level": "1",
+    "normalized_priority": "LOW",
+    "metadata": {
+      "source_line": 3,
+      "unsafe_count_hint": 1
+    }
+  },
+  {
+    "repo": "tokio",
+    "tool": "cargo-geiger",
+    "category": "unsafe_usage",
+    "target": "y",
+    "file": "N/A",
+    "line": 0,
+    "rule_id": "unsafe-usage",
+    "message": "y = total unsafe code found in the crate",
+    "raw_level": "1",
+    "normalized_priority": "LOW",
+    "metadata": {
+      "source_line": 4,
+      "unsafe_count_hint": 1
+    }
+  },
+  {
+    "repo": "tokio",
+    "tool": "cargo-geiger",
+    "category": "unsafe_usage",
+    "target": ":)",
+    "file": "N/A",
+    "line": 0,
+    "rule_id": "unsafe-usage",
+    "message": ":) = No `unsafe` usage found, declares #![forbid(unsafe_code)]",
+    "raw_level": "1",
+    "normalized_priority": "LOW",
+    "metadata": {
+      "source_line": 7,
+      "unsafe_count_hint": 1
+    }
+  },
+  {
+    "repo": "tokio",
+    "tool": "cargo-geiger",
+    "category": "unsafe_usage",
+    "target": "?",
+    "file": "N/A",
+    "line": 0,
+    "rule_id": "unsafe-usage",
+    "message": "?  = No `unsafe` usage found, missing #![forbid(unsafe_code)]",
+    "raw_level": "1",
+    "normalized_priority": "LOW",
+    "metadata": {
+      "source_line": 8,
+      "unsafe_count_hint": 1
+    }
+  },
+  {
+    "repo": "tokio",
+    "tool": "cargo-geiger",
+    "category": "unsafe_usage",
+    "target": "!",
+    "file": "N/A",
+    "line": 0,
+    "rule_id": "unsafe-usage",
+    "message": "!  = `unsafe` usage found",
+    "raw_level": "1",
+    "normalized_priority": "LOW",
+    "metadata": {
+      "source_line": 9,
+      "unsafe_count_hint": 1
+    }
+  },
+  {
+    "repo": "tokio",
+    "tool": "cargo-clippy",
+    "category": "lint",
+    "target": "tokio",
+    "file": "tokio\\src\\runtime\\driver.rs",
+    "line": 361,
+    "rule_id": "clippy::unused_unit",
+    "message": "warning: unneeded unit expression\n   --> tokio\\src\\runtime\\driver.rs:361:9\n    |\n361 |         ()\n    |         ^^ help: remove the final `()`\n    |\n    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#unused_unit\n    = note: `#[warn(clippy::unused_unit)]` on by default",
+    "raw_level": "warning",
+    "normalized_priority": "LOW",
+    "metadata": {
+      "package_id": "path+file:///C:/Users/matil/tokio/tokio#1.52.0",
+      "manifest_path": "C:\\Users\\matil\\tokio\\tokio\\Cargo.toml",
+      "raw_reason": "compiler-message"
+    }
+  },
+  {
+    "repo": "tokio",
+    "tool": "cargo-clippy",
+    "category": "lint",
+    "target": "tokio",
+    "file": "tokio\\src\\runtime\\driver.rs",
+    "line": 50,
+    "rule_id": "clippy::let_unit_value",
+    "message": "warning: this let-binding has unit value\n  --> tokio\\src\\runtime\\driver.rs:50:9\n   |\n50 |         let clock = create_clock(cfg.enable_pause_time, cfg.start_paused);\n   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n   |\n   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#let_unit_value\n   = note: `#[warn(clippy::let_unit_value)]` on by default\nhelp: omit the `let` binding and replace variable usages with `()`\n   |\n50 ~         create_clock(cfg.enable_pause_time, cfg.start_paused);\n51 |\n52 |         let (time_driver, time_handle) =\n53 ~             create_time_driver(cfg.enable_time, cfg.timer_flavor, io_stack, &());\n54 |\n...\n60 |                 time: time_handle,\n61 ~                 clock: (),\n   |",
+    "raw_level": "warning",
+    "normalized_priority": "LOW",
+    "metadata": {
+      "package_id": "path+file:///C:/Users/matil/tokio/tokio#1.52.0",
+      "manifest_path": "C:\\Users\\matil\\tokio\\tokio\\Cargo.toml",
+      "raw_reason": "compiler-message"
+    }
+  }
+]
