@@ -1,0 +1,53 @@
+======================================================================
+SECURITY ANALYSIS SUMMARY
+======================================================================
+
+Total Findings: 52
+
+Distribution by Unified Severity:
+  CRITICAL    :    6
+  HIGH        :    0
+  MEDIUM      :    2
+  LOW         :   31
+  INFO        :   13
+
+Distribution by Tool:
+  cppcheck    :   33
+  flawfinder  :   19
+
+Top 10 CWEs:
+   1. CWE-398     :    6
+   2. CWE-416     :    2
+   3. CWE-476     :    2
+   4. CWE-401     :    1
+   5. CWE-369     :    1
+   6. CWE-415     :    1
+   7. CWE-775     :    1
+
+Top 5 Critical Findings:
+  1. [cppcheck] memleak
+     File: program1.c:16
+     Memory leak: ptr
+     CWE: CWE-401
+
+  2. [cppcheck] zerodiv
+     File: program2.c:5
+     Division by zero.
+     CWE: CWE-369
+
+  3. [cppcheck] deallocuse
+     File: program3.c:31
+     Dereferencing 'string' after it is deallocated / released
+     CWE: CWE-416
+
+  4. [cppcheck] doubleFree
+     File: program3.c:41
+     Memory pointed to by 'string' is freed twice.
+     CWE: CWE-415
+
+  5. [cppcheck] deallocuse
+     File: program3.c:46
+     Dereferencing 'string' after it is deallocated / released
+     CWE: CWE-416
+
+======================================================================
