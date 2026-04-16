@@ -1,0 +1,45 @@
+======================================================================
+SECURITY ANALYSIS SUMMARY
+======================================================================
+
+Total Findings: 163
+
+Distribution by Unified Severity:
+  CRITICAL    :    8
+  HIGH        :    0
+  MEDIUM      :    1
+  LOW         :  137
+  INFO        :   17
+
+Distribution by Tool:
+  cppcheck    :   31
+  flawfinder  :   46
+  semgrep     :   86
+
+Top 10 CWEs:
+   1. CWE-398     :    4
+   2. CWE-477     :    1
+   3. CWE-563     :    1
+
+Top 5 Critical Findings:
+  1. [cppcheck] syntaxError
+     File: SecureCodingDojo/codereview101/snipMemory1.cpp:5
+     syntax error: keyword 'if' is not allowed in global scope
+
+  2. [cppcheck] syntaxError
+     File: SecureCodingDojo/codereview101/snipMemory2.cpp:5
+     syntax error: keyword 'if' is not allowed in global scope
+
+  3. [cppcheck] syntaxError
+     File: SecureCodingDojo/codereview101/snipMemory3.cpp:8
+     syntax error: keyword 'if' is not allowed in global scope
+
+  4. [cppcheck] syntaxError
+     File: SecureCodingDojo/codereview101/snipMemory4.cpp:8
+     syntax error: keyword 'if' is not allowed in global scope
+
+  5. [cppcheck] syntaxError
+     File: SecureCodingDojo/codereview101/snipMemory5.cpp:5
+     syntax error: keyword 'while' is not allowed in global scope
+
+======================================================================

@@ -1,0 +1,57 @@
+======================================================================
+SECURITY ANALYSIS SUMMARY
+======================================================================
+
+Total Findings: 174
+
+Distribution by Unified Severity:
+  CRITICAL    :   23
+  HIGH        :    0
+  MEDIUM      :    3
+  LOW         :  104
+  INFO        :   44
+
+Distribution by Tool:
+  cppcheck    :  118
+  flawfinder  :   53
+  semgrep     :    3
+
+Top 10 CWEs:
+   1. CWE-563     :   19
+   2. CWE-398     :   14
+   3. CWE-457     :    6
+   4. CWE-788     :    4
+   5. CWE-571     :    4
+   6. CWE-369     :    4
+   7. CWE-416     :    3
+   8. CWE-665     :    2
+   9. CWE-401     :    2
+  10. CWE-415     :    2
+
+Top 5 Critical Findings:
+  1. [cppcheck] negativeIndex
+     File: seeve/CWE-119/src/test3.c:11
+     Array 'items[4]' accessed at index -2, which is out of bounds.
+     CWE: CWE-786
+
+  2. [cppcheck] arrayIndexOutOfBounds
+     File: seeve/CWE-125/src/test1.c:4
+     Array 'a[10]' accessed at index 10, which is out of bounds.
+     CWE: CWE-788
+
+  3. [cppcheck] arrayIndexOutOfBounds
+     File: seeve/CWE-125/src/test2.c:6
+     Array 'a[10]' accessed at index 10, which is out of bounds.
+     CWE: CWE-788
+
+  4. [cppcheck] legacyUninitvar
+     File: seeve/CWE-125/src/test2.c:6
+     Uninitialized variable: a
+     CWE: CWE-457
+
+  5. [cppcheck] arrayIndexOutOfBounds
+     File: seeve/CWE-125/src/test3.c:8
+     Array 'a[10]' accessed at index 12, which is out of bounds.
+     CWE: CWE-788
+
+======================================================================
