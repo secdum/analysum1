@@ -1,0 +1,71 @@
+======================================================================
+RUST SECURITY ANALYSIS SUMMARY - RIPGREP
+======================================================================
+
+Total Findings: 636
+
+Distribution by Unified Severity:
+  CRITICAL    :    0
+  HIGH        :    0
+  MEDIUM      :    0
+  LOW         :  636
+  INFO        :    0
+
+Distribution by Tool:
+  cargo-clippy    :  636
+
+Distribution by Category:
+  lint            :  636
+
+Top 10 Rules:
+   1. clippy::bool_assert_comparison     :  164
+   2. clippy::needless_borrows_for_generic_args:  137
+   3. clippy::needless_borrow            :   47
+   4. clippy::doc_lazy_continuation      :   44
+   5. clippy::redundant_static_lifetimes :   31
+   6. clippy::unnecessary_map_or         :   21
+   7. clippy::collapsible_if             :   19
+   8. clippy::io_other_error             :   18
+   9. clippy::clone_on_copy              :   12
+  10. clippy::explicit_auto_deref        :   12
+
+Top 10 Files:
+   1. crates\core\flags\defs.rs          :  171
+   2. tests\regression.rs                :   54
+   3. crates\ignore\src\walk.rs          :   39
+   4. tests\binary.rs                    :   34
+   5. tests\feature.rs                   :   31
+   6. crates\core\flags\hiargs.rs        :   24
+   7. crates\globset\src\glob.rs         :   17
+   8. crates\core\search.rs              :   16
+   9. crates\core\flags\complete\fish.rs :   14
+  10. crates\searcher\src\searcher\core.rs:   13
+
+Top 5 Findings:
+  1. [cargo-clippy] clippy::assign_op_pattern
+     File: crates\globset\src\fnv.rs:26
+     warning: manual implementation of an assign operation   --> crates\globset\src\fnv.rs:26:13    | 26 |             self.0...
+
+  2. [cargo-clippy] clippy::bool_assert_comparison
+     File: crates\core\flags\defs.rs:621
+     warning: used `assert_eq!` with a literal bool    --> crates\core\flags\defs.rs:621:5     | 621 |     assert_eq!(false,...
+
+  3. [cargo-clippy] clippy::bool_assert_comparison
+     File: crates\core\flags\defs.rs:624
+     warning: used `assert_eq!` with a literal bool    --> crates\core\flags\defs.rs:624:5     | 624 |     assert_eq!(true, a...
+
+  4. [cargo-clippy] clippy::bool_assert_comparison
+     File: crates\core\flags\defs.rs:627
+     warning: used `assert_eq!` with a literal bool    --> crates\core\flags\defs.rs:627:5     | 627 |     assert_eq!(true, a...
+
+  5. [cargo-clippy] clippy::bool_assert_comparison
+     File: crates\core\flags\defs.rs:630
+     warning: used `assert_eq!` with a literal bool    --> crates\core\flags\defs.rs:630:5     | 630 |     assert_eq!(false,...
+
+Observations:
+- No cargo-audit vulnerabilities were reported.
+- No unsafe usage findings were reported by cargo-geiger.
+- cargo-clippy reported 636 lint findings.
+- Most findings come from cargo-clippy, indicating that code-quality issues dominate the output.
+
+======================================================================

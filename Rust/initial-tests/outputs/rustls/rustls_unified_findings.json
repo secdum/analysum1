@@ -1,0 +1,82 @@
+[
+  {
+    "repo": "rustls",
+    "tool": "cargo-geiger",
+    "category": "unsafe_usage",
+    "target": "x",
+    "file": "N/A",
+    "line": 0,
+    "rule_id": "unsafe-usage",
+    "message": "x = unsafe code used by the build",
+    "raw_level": "1",
+    "normalized_priority": "LOW",
+    "metadata": {
+      "source_line": 3,
+      "unsafe_count_hint": 1
+    }
+  },
+  {
+    "repo": "rustls",
+    "tool": "cargo-geiger",
+    "category": "unsafe_usage",
+    "target": "y",
+    "file": "N/A",
+    "line": 0,
+    "rule_id": "unsafe-usage",
+    "message": "y = total unsafe code found in the crate",
+    "raw_level": "1",
+    "normalized_priority": "LOW",
+    "metadata": {
+      "source_line": 4,
+      "unsafe_count_hint": 1
+    }
+  },
+  {
+    "repo": "rustls",
+    "tool": "cargo-geiger",
+    "category": "unsafe_usage",
+    "target": ":)",
+    "file": "N/A",
+    "line": 0,
+    "rule_id": "unsafe-usage",
+    "message": ":) = No `unsafe` usage found, declares #![forbid(unsafe_code)]",
+    "raw_level": "1",
+    "normalized_priority": "LOW",
+    "metadata": {
+      "source_line": 7,
+      "unsafe_count_hint": 1
+    }
+  },
+  {
+    "repo": "rustls",
+    "tool": "cargo-geiger",
+    "category": "unsafe_usage",
+    "target": "?",
+    "file": "N/A",
+    "line": 0,
+    "rule_id": "unsafe-usage",
+    "message": "?  = No `unsafe` usage found, missing #![forbid(unsafe_code)]",
+    "raw_level": "1",
+    "normalized_priority": "LOW",
+    "metadata": {
+      "source_line": 8,
+      "unsafe_count_hint": 1
+    }
+  },
+  {
+    "repo": "rustls",
+    "tool": "cargo-geiger",
+    "category": "unsafe_usage",
+    "target": "!",
+    "file": "N/A",
+    "line": 0,
+    "rule_id": "unsafe-usage",
+    "message": "!  = `unsafe` usage found",
+    "raw_level": "1",
+    "normalized_priority": "LOW",
+    "metadata": {
+      "source_line": 9,
+      "unsafe_count_hint": 1
+    }
+  }
+]
