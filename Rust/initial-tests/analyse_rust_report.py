@@ -107,15 +107,15 @@ def generate_observations(findings: list[dict], by_tool, by_category) -> list[st
     if audit_count == 0:
         observations.append("- No cargo-audit vulnerabilities were reported.")
     else:
-        observations.append(f"- cargo-audit reported {audit_count} vulnerability-related findings.")
+        observations.append(f"- cargo-audit reported {audit_count} dependency advisory/warning findings.")
 
     if geiger_count == 0:
-        observations.append("- No unsafe usage findings were reported by cargo-geiger.")
+        observations.append("- No parseable unsafe-usage findings were extracted from cargo-geiger output.")
     else:
         observations.append(f"- cargo-geiger reported {geiger_count} unsafe-usage findings.")
 
     if clippy_count == 0:
-        observations.append("- No cargo-clippy findings were reported.")
+        observations.append("- No parseable cargo-clippy findings were extracted from the analyzed output.")
     else:
         observations.append(f"- cargo-clippy reported {clippy_count} lint findings.")
 

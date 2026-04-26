@@ -262,6 +262,13 @@ def parse_audit(repo: str, path: Path) -> List[Finding]:
     # Warnings
     # ---------------------------
     warnings_obj = data.get("warnings")
+    if isinstance(warnings_obj, dict):
+        flat_warnings = []
+        for key, warn_list in warnings_obj.items():
+            if isinstance(warn_list, list):
+                flat_warnings.extend(warn_list)
+        warnings_obj = flat_warnings
+
     if isinstance(warnings_obj, list):
         for idx, warning in enumerate(warnings_obj, start=1):
             if isinstance(warning, dict):
@@ -273,10 +280,10 @@ def parse_audit(repo: str, path: Path) -> List[Finding]:
                 msg = compact_message(
                     f"Kind: {kind}",
                     f"Package: {package_name} {package_version}",
-                    warning.get("message"),
-                    json.dumps(warning, ensure_ascii=False),
+                    warning.get("message", ""),
+                    warning.get("advisory", {}).get("title", ""),
                 )
-                rule_id = str(warning.get("id", f"audit-warning-{idx}"))
+                rule_id = str(warning.get("advisory", {}).get("id", f"audit-warning-{idx}"))
             else:
                 kind = "warning"
                 package_name = "unknown-package"
@@ -312,39 +319,15 @@ def parse_audit(repo: str, path: Path) -> List[Finding]:
 
 _GEIGER_NUM_RE = re.compile(r"\b\d+\b")
 
-
-def _extract_first_reasonable_target(line: str) -> str:
-    """
-    Heuristic extraction of a target/package name from a cargo-geiger line.
-    """
-    stripped = line.strip()
-    if not stripped:
-        return "unknown-target"
-
-    # First token is often the crate/package name in tabular output.
-    token = stripped.split()[0]
-    token = token.strip("|")
-    return token or "unknown-target"
-
-
 def _extract_unsafe_count(line: str) -> int:
-    """
-    Heuristic extraction of an unsafe count from cargo-geiger text lines.
-    """
     nums = [int(x) for x in _GEIGER_NUM_RE.findall(line)]
     if not nums:
         return 1
-
-    # Heuristic: take the max count seen on the line
     return max(nums)
-
 
 def parse_geiger(repo: str, path: Path) -> List[Finding]:
     """
     Parse cargo-geiger text output into unified findings.
-
-    cargo-geiger is usually human-readable/tabular, so parsing relies on
-    heuristics. This function extracts lines that appear to report unsafe usage.
     """
     findings: List[Finding] = []
 
@@ -358,18 +341,28 @@ def parse_geiger(repo: str, path: Path) -> List[Finding]:
         if not line:
             continue
 
-        lower = line.lower()
-
-        # Skip obvious headers/separators
+        # Ignorar delimitadores de tabelas
         if set(line) <= {"-", "=", "+", "|", " "}:
             continue
 
-        # Keep only lines that likely mention unsafe counts/usages
-        if "unsafe" not in lower:
+        # Ficar APENAS com as linhas que têm o aviso de uso unsafe (" ! ") 
+        # e ignorar as linhas que têm a legenda (" = ")
+        if " ! " not in line or " = " in line:
             continue
 
-        target = _extract_first_reasonable_target(line)
-        unsafe_count = _extract_unsafe_count(line)
+        # Separar a parte das métricas (esq) da parte do pacote (dir)
+        parts = line.split(" ! ")
+        if len(parts) < 2:
+            continue
+
+        metrics_part = parts[0]
+        target_part = parts[1].strip()
+
+        # Limpar os caracteres estranhos da árvore "Ôö£ÔöÇÔöÇ " usando regex
+        target_clean = re.sub(r'^[^a-zA-Z0-9]+', '', target_part)
+        target = target_clean.split()[0] if target_clean else "unknown-target"
+        
+        unsafe_count = _extract_unsafe_count(metrics_part)
 
         findings.append(
             Finding(
@@ -377,10 +370,10 @@ def parse_geiger(repo: str, path: Path) -> List[Finding]:
                 tool="cargo-geiger",
                 category="unsafe_usage",
                 target=target,
-                file="N/A",
+                file="Cargo.toml",
                 line=0,
                 rule_id="unsafe-usage",
-                message=line,
+                message=f"Unsafe code used in dependency: {target_clean}",
                 raw_level=str(unsafe_count),
                 normalized_priority=PriorityNormalizer.normalize_geiger(unsafe_count),
                 metadata={

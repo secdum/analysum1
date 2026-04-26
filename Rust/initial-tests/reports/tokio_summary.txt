@@ -2,41 +2,73 @@
 RUST SECURITY ANALYSIS SUMMARY - TOKIO
 ======================================================================
 
-Total Findings: 2
+Total Findings: 223
 
 Distribution by Unified Severity:
   CRITICAL    :    0
-  HIGH        :    0
-  MEDIUM      :    0
-  LOW         :    2
+  HIGH        :   10
+  MEDIUM      :    6
+  LOW         :  207
   INFO        :    0
 
 Distribution by Tool:
-  cargo-clippy    :    2
+  cargo-audit     :   10
+  cargo-clippy    :  213
 
 Distribution by Category:
-  lint            :    2
+  lint            :  213
+  vulnerability   :    4
+  warning         :    6
 
 Top 10 Rules:
-   1. clippy::let_unit_value             :    1
-   2. clippy::unused_unit                :    1
+   1. unexpected_cfgs                    :   49
+   2. clippy::needless_lifetimes         :   37
+   3. clippy::needless_borrow            :   16
+   4. clippy::legacy_numeric_constants   :   14
+   5. deprecated                         :   13
+   6. clippy::mem_replace_with_default   :    9
+   7. clippy::doc_lazy_continuation      :    8
+   8. clippy::io_other_error             :    6
+   9. clippy::ptr_eq                     :    5
+  10. dead_code                          :    4
 
 Top 10 Files:
-   1. tokio\src\runtime\driver.rs        :    2
+   1. tokio\src\io\util\async_read_ext.rs:   18
+   2. tokio\src\io\util\async_write_ext.rs:   18
+   3. Cargo.lock                         :   10
+   4. tokio\src\macros\cfg.rs            :    9
+   5. tokio\src\time\driver\entry.rs     :    6
+   6. tokio\src\io\registration.rs       :    5
+   7. tokio\src\stream\collect.rs        :    5
+   8. tokio\src\loom\mod.rs              :    4
+   9. tokio\src\runtime\queue.rs         :    4
+  10. tokio\src\sync\rwlock.rs           :    4
 
 Top 5 Findings:
-  1. [cargo-clippy] clippy::let_unit_value
-     File: tokio\src\runtime\driver.rs:50
-     warning: this let-binding has unit value   --> tokio\src\runtime\driver.rs:50:9    | 50 |         let clock = create_clo...
+  1. [cargo-audit] RUSTSEC-2020-0016
+     File: Cargo.lock:0
+     Kind: unmaintained | Package: net2 0.2.39 | `net2` crate has been deprecated; use `socket2` instead
 
-  2. [cargo-clippy] clippy::unused_unit
-     File: tokio\src\runtime\driver.rs:361
-     warning: unneeded unit expression    --> tokio\src\runtime\driver.rs:361:9     | 361 |         ()     |         ^^ help:...
+  2. [cargo-audit] RUSTSEC-2020-0071
+     File: Cargo.lock:0
+     Package: time 0.1.45 | Title: Potential segfault in the time crate | Description: ### Impact  The affected functions set...
+
+  3. [cargo-audit] RUSTSEC-2020-0151
+     File: Cargo.lock:0
+     Package: generator 0.6.25 | Title: Generators can cause data races if non-Send types are used in their generator functio...
+
+  4. [cargo-audit] RUSTSEC-2021-0124
+     File: Cargo.lock:0
+     Package: tokio 0.2.25 | Title: Data race when sending and receiving after closing a `oneshot` channel | Description: If...
+
+  5. [cargo-audit] RUSTSEC-2021-0139
+     File: Cargo.lock:0
+     Kind: unmaintained | Package: ansi_term 0.12.1 | ansi_term is Unmaintained
 
 Observations:
-- No cargo-audit vulnerabilities were reported.
-- No unsafe usage findings were reported by cargo-geiger.
-- cargo-clippy reported 2 lint findings.
+- cargo-audit reported 10 dependency advisory/warning findings.
+- No parseable unsafe-usage findings were extracted from cargo-geiger output.
+- cargo-clippy reported 213 lint findings.
 - Most findings come from cargo-clippy, indicating that code-quality issues dominate the output.
 
 ======================================================================
