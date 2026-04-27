@@ -1,0 +1,21 @@
+FROM ubuntu:22.04
+
+LABEL description="Container para análise estática de código C - Cppcheck, Flawfinder, Semgrep"
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    cppcheck \
+    flawfinder \
+    python3-pip \
+    && pip3 install semgrep \
+    && rm -rf /var/lib/apt/lists/*
+
+# Verificar instalações
+RUN cppcheck --version && \
+    flawfinder --version && \
+    semgrep --version
+
+WORKDIR /docker_c
+
+CMD ["/bin/bash"]
