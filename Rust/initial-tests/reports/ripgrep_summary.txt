@@ -1,0 +1,74 @@
+======================================================================
+RUST SECURITY ANALYSIS SUMMARY - RIPGREP
+======================================================================
+
+Total Findings: 238
+
+Distribution by Unified Severity:
+  CRITICAL    :    0
+  HIGH        :   15
+  MEDIUM      :  206
+  LOW         :   14
+  INFO        :    3
+
+Distribution by Tool:
+  cargo-audit     :   15
+  cargo-clippy    :  223
+
+Distribution by Category:
+  lint            :  223
+  vulnerability   :    4
+  warning         :   11
+
+Top 10 Rules:
+   1. clippy-or-rustc                    :  110
+   2. E0076                              :   37
+   3. E0512                              :   32
+   4. E0044                              :   22
+   5. E0703                              :    4
+   6. clippy::unnecessary_map_or         :    4
+   7. ellipsis_inclusive_range_patterns  :    3
+   8. E0557                              :    2
+   9. RUSTSEC-2022-0041                  :    2
+  10. E0554                              :    1
+
+Top 10 Files:
+   1. C:\Users\matil\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\simd-0.2.5\src\x86\sse2.rs:   99
+   2. C:\Users\matil\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\simd-0.2.5\src\lib.rs:   42
+   3. C:\Users\matil\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\simd-0.2.5\src\common.rs:   24
+   4. C:\Users\matil\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\simd-0.2.5\src\x86\sse3.rs:   19
+   5. C:\Users\matil\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\simd-0.2.5\src\v256.rs:   16
+   6. Cargo.lock                         :   15
+   7. grep-matcher\src\interpolate.rs    :    8
+   8. grep-matcher\src\lib.rs            :    6
+   9. C:\Users\matil\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\simd-0.2.5\src\sixty_four.rs:    5
+  10. unknown                            :    3
+
+Top 5 Findings:
+  1. [cargo-audit] RUSTSEC-2018-0017
+     File: Cargo.lock:0
+     Kind: unmaintained | Package: tempdir 0.3.7 | `tempdir` crate has been deprecated; use `tempfile` instead
+
+  2. [cargo-audit] RUSTSEC-2019-0011
+     File: Cargo.lock:0
+     Kind: unsound | Package: memoffset 0.2.1 | Flaw in offset_of and span_of causes SIGILL, drops uninitialized memory of ar...
+
+  3. [cargo-audit] RUSTSEC-2020-0070
+     File: Cargo.lock:0
+     Kind: unsound | Package: lock_api 0.1.5 | Some lock_api lock guard objects can cause data races
+
+  4. [cargo-audit] RUSTSEC-2020-0077
+     File: Cargo.lock:0
+     Kind: unmaintained | Package: memmap 0.6.2 | memmap is unmaintained
+
+  5. [cargo-audit] RUSTSEC-2021-0071
+     File: Cargo.lock:0
+     Package: grep-cli 0.1.1 | Title: `grep-cli` may run arbitrary executables on Windows | Description: On Windows in versio...
+
+Observations:
+- cargo-audit reported 15 dependency advisory/warning findings.
+- No parseable unsafe-usage findings were extracted from cargo-geiger output.
+- cargo-clippy reported 223 lint findings.
+- Most findings come from cargo-clippy, indicating that code-quality issues dominate the output.
+
+======================================================================
