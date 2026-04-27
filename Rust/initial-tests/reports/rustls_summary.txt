@@ -1,0 +1,36 @@
+======================================================================
+RUST SECURITY ANALYSIS SUMMARY - RUSTLS
+======================================================================
+
+Total Findings: 1
+
+Distribution by Unified Severity:
+  CRITICAL    :    0
+  HIGH        :    1
+  MEDIUM      :    0
+  LOW         :    0
+  INFO        :    0
+
+Distribution by Tool:
+  cargo-audit     :    1
+
+Distribution by Category:
+  warning         :    1
+
+Top 10 Rules:
+   1. RUSTSEC-2024-0436                  :    1
+
+Top 10 Files:
+   1. Cargo.lock                         :    1
+
+Top 5 Findings:
+  1. [cargo-audit] RUSTSEC-2024-0436
+     File: Cargo.lock:0
+     Kind: unmaintained | Package: paste 1.0.15 | paste - no longer maintained
+
+Observations:
+- cargo-audit reported 1 dependency advisory/warning findings.
+- No parseable unsafe-usage findings were extracted from cargo-geiger output.
+- No parseable cargo-clippy findings were extracted from the analyzed output.
+
+======================================================================
