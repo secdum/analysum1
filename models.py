@@ -9,3 +9,4 @@ class Finding:
     message: str     # A descrição legível do erro
     file: str        # O caminho do ficheiro com o erro
     line: int        # A linha do erro
+    cwe: Optional[str] = None
