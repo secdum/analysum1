@@ -1,0 +1,980 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "Cppcheck",
+          "informationUri": "https://github.com/secdum/secdojo-scan",
+          "rules": []
+        }
+      },
+      "results": [
+        {
+          "ruleId": "missingIncludeSystem",
+          "level": "note",
+          "message": {
+            "text": "Include file: <stdio.h> not found. Please note: Standard library headers do not need to be provided to get proper results."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "missingIncludeSystem",
+          "level": "note",
+          "message": {
+            "text": "Include file: <stdlib.h> not found. Please note: Standard library headers do not need to be provided to get proper results."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "missingIncludeSystem",
+          "level": "note",
+          "message": {
+            "text": "Include file: <string.h> not found. Please note: Standard library headers do not need to be provided to get proper results."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-788",
+          "level": "error",
+          "message": {
+            "text": "Buffer is accessed out of bounds: h"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 10
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-788",
+          "level": "error",
+          "message": {
+            "text": "Buffer is accessed out of bounds: h"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 8
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-788",
+          "level": "error",
+          "message": {
+            "text": "Buffer is accessed out of bounds: h"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 7
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-672",
+          "level": "error",
+          "message": {
+            "text": "Returning/dereferencing 'a' after it is deallocated / released"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 28
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-672",
+          "level": "error",
+          "message": {
+            "text": "Returning/dereferencing 'a' after it is deallocated / released"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 26
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-415",
+          "level": "error",
+          "message": {
+            "text": "Memory pointed to by 'b' is freed twice."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 37
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-415",
+          "level": "error",
+          "message": {
+            "text": "Memory pointed to by 'b' is freed twice."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 35
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-476",
+          "level": "warning",
+          "message": {
+            "text": "Possible null pointer dereference: s"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 18
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-476",
+          "level": "warning",
+          "message": {
+            "text": "Possible null pointer dereference: s"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 45
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-476",
+          "level": "warning",
+          "message": {
+            "text": "If memory allocation fails, then there is a possible null pointer dereference: b"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 34
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-476",
+          "level": "warning",
+          "message": {
+            "text": "If memory allocation fails, then there is a possible null pointer dereference: b"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 33
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-476",
+          "level": "warning",
+          "message": {
+            "text": "If memory allocation fails, then there is a possible null pointer dereference: b"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 33
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-398",
+          "level": "note",
+          "message": {
+            "text": "Parameter 's' can be declared as pointer to const"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 16
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-398",
+          "level": "note",
+          "message": {
+            "text": "Variable 'after' can be declared as pointer to const"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 48
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-476",
+          "level": "error",
+          "message": {
+            "text": "Null pointer dereference: s"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 18
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-476",
+          "level": "error",
+          "message": {
+            "text": "Null pointer dereference: s"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 45
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "staticFunction",
+          "level": "note",
+          "message": {
+            "text": "The function 'heap_overflow_write' should have static linkage since it is not used outside of its translation unit."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 6
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "staticFunction",
+          "level": "note",
+          "message": {
+            "text": "The function 'safe_use' should have static linkage since it is not used outside of its translation unit."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 16
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "staticFunction",
+          "level": "note",
+          "message": {
+            "text": "The function 'create_and_free_copy' should have static linkage since it is not used outside of its translation unit."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 22
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "staticFunction",
+          "level": "note",
+          "message": {
+            "text": "The function 'double_free_demo' should have static linkage since it is not used outside of its translation unit."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 32
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "checkersReport",
+          "level": "note",
+          "message": {
+            "text": "Active checkers: 119/186 (use --checkers-report=<filename> to see details)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "unknown"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tool": {
+        "driver": {
+          "name": "Flawfinder",
+          "informationUri": "https://github.com/secdum/secdojo-scan",
+          "rules": []
+        }
+      },
+      "results": [
+        {
+          "ruleId": "CWE-120",
+          "level": "note",
+          "message": {
+            "text": "Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 25
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-120",
+          "level": "note",
+          "message": {
+            "text": "Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 34
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tool": {
+        "driver": {
+          "name": "Semgrep",
+          "informationUri": "https://github.com/secdum/secdojo-scan",
+          "rules": []
+        }
+      },
+      "results": []
+    },
+    {
+      "tool": {
+        "driver": {
+          "name": "secdojo-scan-c-aggregated",
+          "informationUri": "https://github.com/secdum/secdojo-scan",
+          "rules": []
+        }
+      },
+      "results": [
+        {
+          "ruleId": "CWE-788",
+          "level": "error",
+          "message": {
+            "text": "Buffer is accessed out of bounds: h"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 10
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-788",
+          "level": "error",
+          "message": {
+            "text": "Buffer is accessed out of bounds: h"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 8
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-788",
+          "level": "error",
+          "message": {
+            "text": "Buffer is accessed out of bounds: h"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 7
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-672",
+          "level": "error",
+          "message": {
+            "text": "Returning/dereferencing 'a' after it is deallocated / released"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 28
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-672",
+          "level": "error",
+          "message": {
+            "text": "Returning/dereferencing 'a' after it is deallocated / released"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 26
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-415",
+          "level": "error",
+          "message": {
+            "text": "Memory pointed to by 'b' is freed twice."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 37
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-415",
+          "level": "error",
+          "message": {
+            "text": "Memory pointed to by 'b' is freed twice."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 35
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-476",
+          "level": "warning",
+          "message": {
+            "text": "Possible null pointer dereference: s"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 18
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-476",
+          "level": "warning",
+          "message": {
+            "text": "Possible null pointer dereference: s"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 45
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-476",
+          "level": "warning",
+          "message": {
+            "text": "If memory allocation fails, then there is a possible null pointer dereference: b"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 34
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-476",
+          "level": "warning",
+          "message": {
+            "text": "If memory allocation fails, then there is a possible null pointer dereference: b"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 33
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "missingIncludeSystem",
+          "level": "note",
+          "message": {
+            "text": "Include file: <stdio.h> not found. Please note: Standard library headers do not need to be provided to get proper results."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "missingIncludeSystem",
+          "level": "note",
+          "message": {
+            "text": "Include file: <stdlib.h> not found. Please note: Standard library headers do not need to be provided to get proper results."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "missingIncludeSystem",
+          "level": "note",
+          "message": {
+            "text": "Include file: <string.h> not found. Please note: Standard library headers do not need to be provided to get proper results."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-398",
+          "level": "note",
+          "message": {
+            "text": "Parameter 's' can be declared as pointer to const"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 16
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-398",
+          "level": "note",
+          "message": {
+            "text": "Variable 'after' can be declared as pointer to const"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 48
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "staticFunction",
+          "level": "note",
+          "message": {
+            "text": "The function 'heap_overflow_write' should have static linkage since it is not used outside of its translation unit."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 6
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "staticFunction",
+          "level": "note",
+          "message": {
+            "text": "The function 'safe_use' should have static linkage since it is not used outside of its translation unit."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 16
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "staticFunction",
+          "level": "note",
+          "message": {
+            "text": "The function 'create_and_free_copy' should have static linkage since it is not used outside of its translation unit."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 22
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "staticFunction",
+          "level": "note",
+          "message": {
+            "text": "The function 'double_free_demo' should have static linkage since it is not used outside of its translation unit."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 32
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "checkersReport",
+          "level": "note",
+          "message": {
+            "text": "Active checkers: 119/186 (use --checkers-report=<filename> to see details)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "unknown"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-120",
+          "level": "note",
+          "message": {
+            "text": "Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 25
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-120",
+          "level": "note",
+          "message": {
+            "text": "Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/teixeira_70/UM/2_semestre/proj/analysum1/C/vun_exe3.c"
+                },
+                "region": {
+                  "startLine": 34
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
