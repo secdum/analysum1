@@ -1,0 +1,30 @@
+# Base leve com Rust
+FROM rust:latest
+
+# 1. Instalar dependências do sistema e ferramentas de C
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    libssl-dev \
+    pkg-config \
+    git \
+    cppcheck \
+    flawfinder \
+    && rm -rf /var/lib/apt/lists/*
+
+# 2. Instalar as ferramentas de análise Rust
+RUN cargo install cargo-audit
+RUN cargo install cargo-geiger
+
+# 3. Adicionar o Clippy
+RUN rustup component add clippy
+
+# 4. Definir a pasta de trabalho
+WORKDIR /app
+
+# 5. Copiar os ficheiros do projeto
+COPY . .
+
+# 6. O comando padrão deve apontar para o Orquestrador Principal
+ENTRYPOINT ["python3", "secdojo_scan.py"]
+CMD ["--help"]
