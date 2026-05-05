@@ -1,0 +1,18 @@
+FROM rust:latest
+
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    libssl-dev \
+    pkg-config \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN cargo install cargo-audit
+RUN cargo install cargo-geiger
+RUN rustup component add clippy
+
+WORKDIR /app
+COPY . .
+
+CMD ["/bin/bash"]
