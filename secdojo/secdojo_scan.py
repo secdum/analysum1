@@ -2,6 +2,8 @@ import argparse
 import sys
 import os
 import time
+from scanners.rust_scan import scan_raw
+from scanners.rust_parser import parse_all_rust
 
 # ANSI Color Codes for beautiful CLI output
 CYAN = '\033[96m'
@@ -109,8 +111,43 @@ def main():
     print()
     spinner_animation("Initializing scan engines...", duration=1.8)
     
-    print(f"\n{YELLOW}[!] Note: The scanning core is not yet hooked up to this CLI.{RESET}")
-    print(f"{GREEN}[OK] Ready for future implementation.{RESET}")
+    all_findings = []
+
+    if lang in ['rust', 'all']:
+        print(f"\n{CYAN}[*] Starting Rust Analysis...{RESET}")
+        try:
+            # Correr as ferramentas 
+            raw_results = scan_raw(path)
+            print(f"\n[DEBUG] Erro Audit: {raw_results['audit'].get('error')}")
+            print(f"[DEBUG] Erro Geiger: {raw_results['geiger'].get('error')}\n")
+            #Fazer o parse dos resultados
+            rust_findings = parse_all_rust(raw_results)
+            all_findings.extend(rust_findings)
+            
+            print(f"{GREEN}[OK] Rust analysis completed!{RESET}")
+        except Exception as e:
+            print(f"{RED}[ERROR] Rust scan failed: {e}{RESET}")
+
+    if lang in ['c', 'all']:
+        print(f"\n{YELLOW}[!] C analysis is not yet implemented.{RESET}")
+        
+
+  
+    print(f"\n{CYAN}{BOLD}================================================={RESET}")
+    print(f"{CYAN}{BOLD}                  SCAN RESULTS                   {RESET}")
+    print(f"{CYAN}{BOLD}================================================={RESET}")
+
+    if not all_findings:
+        print(f"\n{GREEN} Excellent! No vulnerabilities or issues found.{RESET}\n")
+    else:
+        print(f"\n{RED} Found {len(all_findings)} issue(s):{RESET}\n")
+        for f in all_findings:
+            color = RED if f.severity in ["CRITICAL", "HIGH"] else YELLOW
+            
+            print(f"[{color}{BOLD}{f.severity}{RESET}] {f.tool} ({f.type})")
+            print(f"    {f.message}")
+            print(f"    {CYAN}Location:{RESET} {f.file}:{f.line}")
+            print("-" * 50)
 
 if __name__ == "__main__":
     main()
