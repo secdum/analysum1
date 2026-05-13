@@ -16,10 +16,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Secret Scanning (Gitleaks)
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Secret Scanning (TruffleHog)
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
         continue-on-error: true
 
       - name: Set up Python
@@ -34,7 +34,7 @@ jobs:
 
       - name: SAST Scanning (Bandit)
         run: |
-          bandit -r secdojo/ -ll
+          bandit -r . -ll
         continue-on-error: true
 
       - name: Build Unified Docker Image

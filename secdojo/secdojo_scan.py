@@ -2,6 +2,9 @@ import argparse
 import sys
 import os
 import time
+
+# Add parent directory to sys.path to allow importing from 'scanners'
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from scanners.rust_scan import scan_raw
 from scanners.rust_parser import parse_all_rust
 
