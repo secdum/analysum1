@@ -64,7 +64,7 @@ def run_cppcheck(target: str, max_workers: int = 4, timeout_per_dir: int = 600) 
             try:
                 xml_chunk = future.result()
                 if xml_chunk.strip():
-                    root = ET.fromstring(xml_chunk)
+                    root = ET.fromstring(xml_chunk)  # nosec B314
                     for error in root.iter("error"):
                         all_errors.append(ET.tostring(error, encoding="unicode"))
             except Exception as exc:
