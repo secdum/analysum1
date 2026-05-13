@@ -1,13 +1,11 @@
-"""
-To run this Dockerfile, you need to have Docker installed on your system.
-Build the image:
-
-docker build -f Dockerfile.unified -t secdojo-scanner .
-
-To run the unified environment and test the CLI inside it:
-
-docker run -it --rm secdojo-scanner
-"""
+# To run this Dockerfile, you need to have Docker installed on your system.
+# Build the image:
+#
+# docker build -f Dockerfile.unified -t secdojo-scanner .
+#
+# To run the unified environment and test the CLI inside it:
+#
+# docker run -it --rm secdojo-scanner
 
 FROM ubuntu:22.04
 

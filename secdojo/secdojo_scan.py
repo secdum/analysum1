@@ -2,6 +2,9 @@ import argparse
 import sys
 import os
 import time
+
+# Add parent directory to sys.path to allow importing from 'scanners'
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from scanners.rust_scan import scan_raw
 from scanners.rust_parser import parse_all_rust
 
@@ -127,6 +130,7 @@ def main():
             print(f"{GREEN}[OK] Rust analysis completed!{RESET}")
         except Exception as e:
             print(f"{RED}[ERROR] Rust scan failed: {e}{RESET}")
+            sys.exit(2)
 
     if lang in ['c', 'all']:
         print(f"\n{YELLOW}[!] C analysis is not yet implemented.{RESET}")
@@ -148,6 +152,7 @@ def main():
             print(f"    {f.message}")
             print(f"    {CYAN}Location:{RESET} {f.file}:{f.line}")
             print("-" * 50)
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

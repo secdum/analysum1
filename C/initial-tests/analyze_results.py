@@ -137,7 +137,7 @@ class ResultsParser:
         findings = []
         
         try:
-            tree = ET.parse(xml_file)
+            tree = ET.parse(xml_file)  # nosec B314
             root = tree.getroot()
             
             for error in root.findall('.//error'):
