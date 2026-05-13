@@ -127,6 +127,7 @@ def main():
             print(f"{GREEN}[OK] Rust analysis completed!{RESET}")
         except Exception as e:
             print(f"{RED}[ERROR] Rust scan failed: {e}{RESET}")
+            sys.exit(2)
 
     if lang in ['c', 'all']:
         print(f"\n{YELLOW}[!] C analysis is not yet implemented.{RESET}")
@@ -148,6 +149,7 @@ def main():
             print(f"    {f.message}")
             print(f"    {CYAN}Location:{RESET} {f.file}:{f.line}")
             print("-" * 50)
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
