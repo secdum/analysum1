@@ -2,11 +2,13 @@ import argparse
 import sys
 import os
 import time
+import json
 
 # Add parent directory to sys.path to allow importing from 'scanners'
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from scanners.rust_scan import scan_raw
 from scanners.rust_parser import parse_all_rust
+from scanners.c_scan import scan_c
 
 # ANSI Color Codes for beautiful CLI output
 CYAN = '\033[96m'
@@ -81,6 +83,36 @@ def wizard():
         
     return lang, path
 
+class Finding:
+    def __init__(self, tool, f_type, message, file, line, severity):
+        self.tool = tool
+        self.type = f_type
+        self.message = message
+        self.file = file
+        self.line = line
+        self.severity = severity
+
+def sarif_to_findings(sarif_data):
+    """Converts the SARIF output to a list of Finding objects for the CLI."""
+    findings = []
+    # 'secdojo-scan-c-aggregated' as the last run
+    run = sarif_data["runs"][-1] 
+    tool_name = run["tool"]["driver"]["name"]
+    
+    severity_map = {"error": "HIGH", "warning": "MEDIUM", "note": "LOW"}
+
+    for res in run.get("results", []):
+        loc = res["locations"][0]["physicalLocation"]
+        findings.append(Finding(
+            tool=tool_name,
+            f_type=res.get("ruleId", "N/A"),
+            message=res["message"]["text"],
+            file=loc["artifactLocation"]["uri"],
+            line=loc["region"]["startLine"],
+            severity=severity_map.get(res.get("level"), "MEDIUM")
+        ))
+    return findings
+
 def main():
     parser = argparse.ArgumentParser(
         description="SecDojo Scanner CLI - A security analysis tool for C and Rust codebases.",
@@ -103,56 +135,96 @@ def main():
             print(f"{RED}Error: When using CLI arguments, both --lang and --path are required.{RESET}")
             parser.print_help()
             sys.exit(1)
-            
-    print("\n")
-    spinner_animation("Validating configuration...", duration=1.2)
-    
-    print(f"\n{CYAN}{BOLD}[*] Configuration Accepted!{RESET}")
-    typewriter_print(f"  {BOLD}Language:{RESET} {lang.capitalize()}")
-    typewriter_print(f"  {BOLD}Target Path:{RESET} {os.path.abspath(path)}")
-    
-    print()
-    spinner_animation("Initializing scan engines...", duration=1.8)
-    
-    all_findings = []
 
-    if lang in ['rust', 'all']:
-        print(f"\n{CYAN}[*] Starting Rust Analysis...{RESET}")
-        try:
-            # Correr as ferramentas 
-            raw_results = scan_raw(path)
-            print(f"\n[DEBUG] Erro Audit: {raw_results['audit'].get('error')}")
-            print(f"[DEBUG] Erro Geiger: {raw_results['geiger'].get('error')}\n")
-            #Fazer o parse dos resultados
-            rust_findings = parse_all_rust(raw_results)
-            all_findings.extend(rust_findings)
-            
-            print(f"{GREEN}[OK] Rust analysis completed!{RESET}")
-        except Exception as e:
-            print(f"{RED}[ERROR] Rust scan failed: {e}{RESET}")
-            sys.exit(2)
-
-    if lang in ['c', 'all']:
-        print(f"\n{YELLOW}[!] C analysis is not yet implemented.{RESET}")
+    while True:
+        print("\n")
+        spinner_animation("Validating configuration...", duration=1.2)
         
+        print(f"\n{CYAN}{BOLD}[*] Configuration Accepted!{RESET}")
+        typewriter_print(f"  {BOLD}Language:{RESET} {lang.capitalize()}")
+        typewriter_print(f"  {BOLD}Target Path:{RESET} {os.path.abspath(path)}")
+        
+        print()
+        spinner_animation("Initializing scan engines...", duration=1.8)
+        
+        path = os.path.abspath(path)
+        if not os.path.exists(path):
+            print(f"{RED}[ERROR] The path '{path}' does not exist.{RESET}")
+            sys.exit(1)
+        
+        all_findings = []
+        had_errors = False
 
-  
-    print(f"\n{CYAN}{BOLD}================================================={RESET}")
-    print(f"{CYAN}{BOLD}                  SCAN RESULTS                   {RESET}")
-    print(f"{CYAN}{BOLD}================================================={RESET}")
+        if lang in ['rust', 'all']:
+            print(f"\n{CYAN}[*] Starting Rust Analysis...{RESET}")
+            try:
+                # Run the tools 
+                raw_results = scan_raw(path)
+                print(f"\n[DEBUG] Error Audit: {raw_results['audit'].get('error')}")
+                print(f"[DEBUG] Error Geiger: {raw_results['geiger'].get('error')}\n")
+                # Parse the results
+                rust_findings = parse_all_rust(raw_results)
+                all_findings.extend(rust_findings)
+                
+                print(f"{GREEN}[OK] Rust analysis completed!{RESET}")
+            except Exception as e:
+                print(f"{RED}[ERROR] Rust scan failed: {e}{RESET}")
+                had_errors = True
 
-    if not all_findings:
-        print(f"\n{GREEN} Excellent! No vulnerabilities or issues found.{RESET}\n")
-    else:
-        print(f"\n{RED} Found {len(all_findings)} issue(s):{RESET}\n")
-        for f in all_findings:
-            color = RED if f.severity in ["CRITICAL", "HIGH"] else YELLOW
-            
-            print(f"[{color}{BOLD}{f.severity}{RESET}] {f.tool} ({f.type})")
-            print(f"    {f.message}")
-            print(f"    {CYAN}Location:{RESET} {f.file}:{f.line}")
-            print("-" * 50)
-        sys.exit(1)
+        if lang in ['c', 'all']:
+            print(f"\n{CYAN}[*] Starting C Analysis...{RESET}")
+            try:
+                spinner_animation("Running C analysis engines...", duration=2.0)
+                # 1. Executes the C scanner
+                sarif_results = scan_c(path)
+                # 2. Saves the file (SARIF)
+                report_name = "secdojo_report.sarif"
+                with open(report_name, "w") as f_out:
+                    json.dump(sarif_results, f_out, indent=2)
+                print(f"{GREEN}[OK] SARIF report saved to: {os.path.abspath(report_name)}{RESET}")
+                # 3. Converts to display in the CLI
+                c_findings = sarif_to_findings(sarif_results)
+                all_findings.extend(c_findings)
+                
+                print(f"{GREEN}[OK] C analysis completed!{RESET}")
+            except Exception as e:
+                print(f"{RED}[ERROR] C scan failed: {e}{RESET}")
+                had_errors = True
+
+        print(f"\n{CYAN}{BOLD}================================================={RESET}")
+        print(f"{CYAN}{BOLD}                  SCAN RESULTS                   {RESET}")
+        print(f"{CYAN}{BOLD}================================================={RESET}")
+
+        if not all_findings:
+            if had_errors:
+                print(f"\n{YELLOW}[!] Scan finished with errors. Results may be incomplete.{RESET}\n")
+            else:
+                print(f"\n{GREEN} Excellent! No vulnerabilities or issues found.{RESET}\n")
+        else:
+            print(f"\n{RED} Found {len(all_findings)} issue(s):{RESET}\n")
+            for f in all_findings:
+                color = RED if f.severity in ["CRITICAL", "HIGH"] else YELLOW
+                
+                print(f"[{color}{BOLD}{f.severity}{RESET}] {f.tool} ({f.type})")
+                print(f"    {f.message}")
+                print(f"    {CYAN}Location:{RESET} {f.file}:{f.line}")
+                print("-" * 50)
+
+        # Post-scan
+        print(f"\n{BOLD}What do you want to do next?{RESET}")
+        print(f"  {CYAN}1){RESET} Run another scan")
+        print(f"  {CYAN}2){RESET} Close CLI")
+
+        choice = ""
+        while choice not in ['1', '2']:
+            choice = input(f"\n{GREEN}Select an option (1/2): {RESET}").strip()
+
+        if choice == '2':
+            print(f"\n{CYAN}Goodbye!{RESET}\n")
+            sys.exit(0)
+
+        # Ask for new scan parameters via wizard
+        lang, path = wizard()
 
 if __name__ == "__main__":
     main()
