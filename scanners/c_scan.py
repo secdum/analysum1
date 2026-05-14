@@ -6,8 +6,8 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from c_parser import parse_cppcheck, parse_flawfinder, parse_semgrep
-from c_sarif import build_sarif
+from scanners.c_parser import parse_cppcheck, parse_flawfinder, parse_semgrep
+from scanners.c_sarif import build_sarif
 
 MAX_FILES_PER_DIR = 200
 
