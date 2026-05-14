@@ -211,20 +211,24 @@ def main():
                 print("-" * 50)
 
         # Post-scan
-        print(f"\n{BOLD}What do you want to do next?{RESET}")
-        print(f"  {CYAN}1){RESET} Run another scan")
-        print(f"  {CYAN}2){RESET} Close CLI")
+        # --- Post-scan prompt ---
+        if sys.stdin.isatty():
+            print(f"\n{BOLD}What do you want to do next?{RESET}")
+            print(f"  {CYAN}1){RESET} Run another scan")
+            print(f"  {CYAN}2){RESET} Close CLI")
 
-        choice = ""
-        while choice not in ['1', '2']:
-            choice = input(f"\n{GREEN}Select an option (1/2): {RESET}").strip()
+            choice = ""
+            while choice not in ['1', '2']:
+                choice = input(f"\n{GREEN}Select an option (1/2): {RESET}").strip()
 
-        if choice == '2':
-            print(f"\n{CYAN}Goodbye!{RESET}\n")
-            sys.exit(0)
+            if choice == '2':
+                print(f"\n{CYAN}Goodbye!{RESET}\n")
+                sys.exit(0)
 
-        # Ask for new scan parameters via wizard
-        lang, path = wizard()
+            lang, path = wizard()
+        else:
+            # Non-interactive (CI/CD)
+            break
 
 if __name__ == "__main__":
     main()
