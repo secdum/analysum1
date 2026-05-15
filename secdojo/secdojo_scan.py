@@ -6,10 +6,10 @@ import json
 
 # Add parent directory to sys.path to allow importing from 'scanners'
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from scanners.rust_scan import scan_raw
-from scanners.rust_parser import parse_all_rust
-from scanners.c_scan import scan_c
-from models import Finding
+from scanners.Rust.rust_scan import scan_raw
+from scanners.Rust.rust_parser import parse_all_rust
+from scanners.C.c_scan import scan_c
+from secdojo.models import Finding
 
 # ANSI Color Codes for beautiful CLI output
 CYAN = '\033[96m'

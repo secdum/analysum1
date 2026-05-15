@@ -1,7 +1,7 @@
 # teste_local.py
-from scanners import rust_scan
-from scanners import rust_parser
-from scanners import rust_sarif
+from scanners.Rust import rust_scan
+from scanners.Rust import rust_parser
+from scanners.Rust import rust_sarif
 
 def testar_rust():
     caminho_teste = "C:\\Users\\matil\\ripgrep"

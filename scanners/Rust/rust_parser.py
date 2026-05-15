@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from typing import Any
-from models import Finding
+from secdojo.models import Finding
 
 _SEVERITY_MAP: dict[str, str] = {
     "error": "HIGH",
