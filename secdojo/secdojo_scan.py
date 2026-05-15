@@ -9,6 +9,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from scanners.rust_scan import scan_raw
 from scanners.rust_parser import parse_all_rust
 from scanners.c_scan import scan_c
+from models import Finding
 
 # ANSI Color Codes for beautiful CLI output
 CYAN = '\033[96m'
@@ -19,7 +20,7 @@ BOLD = '\033[1m'
 RESET = '\033[0m'
 
 def typewriter_print(text, delay=0.015):
-    """Prints text with a typewriter effect."""
+    """Prints text with a typewriter effect"""
     for char in text:
         sys.stdout.write(char)
         sys.stdout.flush()
@@ -27,7 +28,7 @@ def typewriter_print(text, delay=0.015):
     print()
 
 def spinner_animation(text, duration=2.0):
-    """Displays a spinning animation for a given duration."""
+    """Displays a spinning animation for a given duration"""
     chars = ['|', '/', '-', '\\']
     start_time = time.time()
     i = 0
@@ -83,33 +84,22 @@ def wizard():
         
     return lang, path
 
-class Finding:
-    def __init__(self, tool, f_type, message, file, line, severity):
-        self.tool = tool
-        self.type = f_type
-        self.message = message
-        self.file = file
-        self.line = line
-        self.severity = severity
-
 def sarif_to_findings(sarif_data):
-    """Converts the SARIF output to a list of Finding objects for the CLI."""
+    """Converts the SARIF output to a list of Finding objects for the CLI"""
     findings = []
     # 'secdojo-scan-c-aggregated' as the last run
     run = sarif_data["runs"][-1] 
     tool_name = run["tool"]["driver"]["name"]
-    
-    severity_map = {"error": "HIGH", "warning": "MEDIUM", "note": "LOW"}
 
     for res in run.get("results", []):
         loc = res["locations"][0]["physicalLocation"]
         findings.append(Finding(
             tool=tool_name,
-            f_type=res.get("ruleId", "N/A"),
+            type=res.get("ruleId", "N/A"),
             message=res["message"]["text"],
             file=loc["artifactLocation"]["uri"],
             line=loc["region"]["startLine"],
-            severity=severity_map.get(res.get("level"), "MEDIUM")
+            severity=res.get("level", "undefined")
         ))
     return findings
 
@@ -197,13 +187,13 @@ def main():
 
         if not all_findings:
             if had_errors:
-                print(f"\n{YELLOW}[!] Scan finished with errors. Results may be incomplete.{RESET}\n")
+                print(f"\n{YELLOW}{BOLD}[!] Scan finished with errors. Results may be incomplete.{RESET}\n")
             else:
-                print(f"\n{GREEN} Excellent! No vulnerabilities or issues found.{RESET}\n")
+                print(f"\n{GREEN}{BOLD} Excellent! No vulnerabilities or issues found.{RESET}\n")
         else:
-            print(f"\n{RED} Found {len(all_findings)} issue(s):{RESET}\n")
+            print(f"\n{RED}{BOLD} Found {len(all_findings)} issue(s):{RESET}\n")
             for f in all_findings:
-                color = RED if f.severity in ["CRITICAL", "HIGH"] else YELLOW
+                color = RED if f.severity in ["error"] else YELLOW
                 
                 print(f"[{color}{BOLD}{f.severity}{RESET}] {f.tool} ({f.type})")
                 print(f"    {f.message}")
