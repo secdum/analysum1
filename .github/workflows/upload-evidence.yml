@@ -29,7 +29,7 @@ jobs:
       - name: Run SecDojo Scanners
         run: |
           echo "Executing unified security scans..."
-          python secdojo_scan.py --lang all --path .
+          python secdojo/secdojo_scan.py --lang all --path .
 
       # Collects the generated SARIF report and moves it into your designated outputs folder
       - name: Organize Report Artifacts
