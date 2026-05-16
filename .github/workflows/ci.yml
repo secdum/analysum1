@@ -74,3 +74,17 @@ jobs:
             echo "Rust Scan failed with runtime error (exit code $EXIT_CODE)."
             exit $EXIT_CODE
           fi
+          
+      - name: Run Tool Against Combined Test Repository
+        run: |
+          set +e
+          docker run --rm secdojo-scanner:test python3 secdojo/secdojo_scan.py --lang all --path examples/vuln-test-final
+          EXIT_CODE=$?
+          set -e
+          if [ $EXIT_CODE -eq 0 ] || [ $EXIT_CODE -eq 1 ]; then
+            echo "Combined scan passed (exit code $EXIT_CODE)."
+            exit 0
+          else
+            echo "Combined scan failed with runtime error (exit code $EXIT_CODE)."
+            exit $EXIT_CODE
+          fi

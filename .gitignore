@@ -5,4 +5,7 @@ target/
 GnuPG/
 Gpg4win/
 __pycache__/
+*.sarif 
+secdojo_report.sarif
+report.json
 .vscode/

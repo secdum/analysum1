@@ -1,0 +1,134 @@
+# vuln-test-final
+
+Intentionally vulnerable repository for testing the **SecDojo Scanner** with both Rust and C code in a single directory.
+
+> **WARNING:** This code is deliberately insecure. Never use it in production.
+
+---
+
+## Structure
+
+```
+vuln-test-final/
+├── Cargo.toml          ← Rust project with vulnerable dependencies
+├── Cargo.lock          ← Pinned dependency versions (triggers cargo-audit)
+├── src/
+│   └── main.rs         ← Rust code with unsafe blocks and vulnerable crates
+├── vuln.c              ← C code with multiple CWEs
+└── README.md           ← This file
+```
+
+---
+
+## What the scanner detects
+
+### Rust — cargo-audit (3 findings)
+
+| Severity | Advisory | Crate | Description |
+|----------|----------|-------|-------------|
+| warning | RUSTSEC-2024-0375 | `atty 0.2.14` | Unmaintained crate |
+| warning | RUSTSEC-2024-0320 | `yaml-rust 0.4.4` | Unmaintained crate |
+| warning | RUSTSEC-2021-0145 | `atty 0.2.14` | Unsound — potential unaligned read |
+
+### C — Flawfinder (3 findings)
+
+| Severity | CWE | Line | Description |
+|----------|-----|------|-------------|
+| error | CWE-120 | vuln.c:21 | `strcpy` does not check for buffer overflows |
+| error | CWE-134 | vuln.c:43 | Format string can be exploited |
+| note | CWE-119/CWE-120 | vuln.c:20 | Statically-sized array may be improperly restricted |
+
+### Not detected (known limitations)
+
+Some vulnerabilities in `vuln.c` are not detected by the current toolchain:
+
+| CWE | Function | Why not detected |
+|-----|----------|------------------|
+| CWE-416 | `use_after_free()` | Cppcheck needs compilable code; undefined functions in `main()` prevent full analysis |
+| CWE-476 | `null_pointer_deref()` | Same reason — `memory_leak()` and `double_free()` are called but not defined |
+| CWE-190 | `integer_overflow()` | Not covered by Flawfinder; Cppcheck skips due to compile errors |
+
+---
+
+## How to scan
+
+### From the repo root (inside Docker)
+
+```bash
+# Both languages
+docker run --rm \
+  -v "${PWD}:/workspace" -w /workspace \
+  secdojo-scanner:test \
+  python3 secdojo/secdojo_scan.py --lang all --path /workspace/examples/vuln-test-final
+
+# Only Rust
+docker run --rm \
+  -v "${PWD}:/workspace" -w /workspace \
+  secdojo-scanner:test \
+  python3 secdojo/secdojo_scan.py --lang rust --path /workspace/examples/vuln-test-final
+
+# Only C
+docker run --rm \
+  -v "${PWD}:/workspace" -w /workspace \
+  secdojo-scanner:test \
+  python3 secdojo/secdojo_scan.py --lang c --path /workspace/examples/vuln-test-final
+```
+
+### Save output to file
+
+```bash
+# JSON report
+docker run --rm \
+  -v "${PWD}:/workspace" -w /workspace \
+  secdojo-scanner:test \
+  python3 secdojo/secdojo_scan.py --lang all --path /workspace/examples/vuln-test-final --output /workspace/report.json
+
+# Plain text report
+docker run --rm \
+  -v "${PWD}:/workspace" -w /workspace \
+  secdojo-scanner:test \
+  python3 secdojo/secdojo_scan.py --lang all --path /workspace/examples/vuln-test-final --output /workspace/report.txt
+```
+
+### Local (Windows — example of Rust only, C tools not installed)
+
+```powershell
+python secdojo/secdojo_scan.py --lang rust --path examples/vuln-test-final --output report.json
+```
+
+---
+
+## Expected output (6 findings)
+
+```
+=================================================
+                  SCAN RESULTS
+=================================================
+
+  Summary
+    Errors   : 2
+    Warnings : 3
+    Notes    : 1
+    Total    : 6
+
+[ cargo-audit — 3 finding(s) ]
+[warning] RUSTSEC-2024-0375 — atty is unmaintained
+[warning] RUSTSEC-2024-0320 — yaml-rust is unmaintained
+[warning] RUSTSEC-2021-0145 — atty unsound (potential unaligned read)
+
+[ secdojo-scan-c-aggregated — 3 finding(s) ]
+[error]   CWE-120 — strcpy buffer overflow (vuln.c:21)
+[error]   CWE-134 — format string injection (vuln.c:43)
+[note]    CWE-119/CWE-120 — static array bounds (vuln.c:20)
+```
+
+---
+
+## Triggering the release workflow
+
+```bash
+git tag v1.1.0
+git push origin v1.1.0
+```
+
+This triggers `Upload Evidence to Release`, which runs the scanner inside Docker and attaches `evidence.zip` (containing `.sarif` and `.json` outputs) to the GitHub Release.
