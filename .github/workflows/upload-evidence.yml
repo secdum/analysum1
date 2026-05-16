@@ -3,14 +3,14 @@ name: Upload Evidence to Release
 on:
   push:
     tags:
-      - 'v*' # The Action only triggers when a tag is pushed (e.g., v1.0.0, v1.1, etc.)
+      - 'v*' # Runs only when a tag is pushed (e.g. v1.0.0, v1.1)
 
 jobs:
   release-evidence:
     name: Generate and Upload Artifacts
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Required for the Action to create the Release and attach files
+      contents: write # Required to create the Release and attach files
 
     steps:
       - name: Checkout repository
@@ -21,30 +21,46 @@ jobs:
         with:
           python-version: '3.13'
 
-      # Ensures the target outputs directory exists before running the orchestration script
-      - name: Create Outputs Directory
-        run: mkdir -p research/Rust/initial-tests/outputs
+      - name: Create evidence directory
+        # Local folder mounted into the container via volume (-v)
+        # Anything the scanner writes to /workspace lands here on the host
+        run: mkdir -p ${{ github.workspace }}/evidence
 
-      # Runs your master Python script non-interactively to trigger both Rust and C analysis
+      - name: Build scanner image
+        # Builds the image with all required tools (cargo-audit, geiger, cppcheck...)
+        run: docker build -f Dockerfile.unified -t secdojo-scanner:release .
+
       - name: Run SecDojo Scanners
+        # Runs the scanner inside the container with the workspace mounted
+        # --lang all = Rust + C, --path /workspace = points to the repo root
         run: |
-          echo "Executing unified security scans..."
-          python secdojo/secdojo_scan.py --lang all --path .
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
+            secdojo-scanner:release \
+            python3 secdojo/secdojo_scan.py --lang all --path /workspace
 
-      # Collects the generated SARIF report and moves it into your designated outputs folder
-      - name: Organize Report Artifacts
+      - name: Collect all outputs into evidence/
+        # Finds all .sarif and .json files produced by the scanner anywhere
+        # in the workspace and copies them into evidence/ for archiving
         run: |
-          if [ -f "secdojo_report.sarif" ]; then
-            mv secdojo_report.sarif research/Rust/initial-tests/outputs/
-          fi
+          find ${{ github.workspace }} \
+            -maxdepth 4 \
+            \( -name "*.sarif" -o -name "*.json" \) \
+            ! -path "*/evidence/*" \
+            ! -path "*/.git/*" \
+            ! -path "*/node_modules/*" \
+            -exec cp {} ${{ github.workspace }}/evidence/ \;
+          echo "=== Collected files ==="
+          ls -lh ${{ github.workspace }}/evidence/
 
-      # Compresses the target directory into a single archive for the Release attachment
-      - name: Zip the outputs
-        run: |
-          zip -r evidence.zip research/Rust/initial-tests/outputs/ || true
+      - name: Zip evidence
+        # Compresses all collected outputs into a single archive for the Release
+        run: zip -r evidence.zip evidence/
 
-      # Creates the GitHub Release matching your tag version and uploads the evidence archive
-      - name: Create Release and Attach Asset
+      - name: Create Release and attach evidence
+        # Creates the GitHub Release named after the tag and attaches evidence.zip
         uses: softprops/action-gh-release@v2
         with:
           files: evidence.zip
