@@ -4,7 +4,6 @@ import os
 import time
 import json
 from collections import defaultdict
-import re
 
 # Add parent directory to sys.path to allow importing from 'scanners'
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -320,7 +319,7 @@ def main():
                 sarif_results = scan_c(path)
 
                 # Save the SARIF report to disk
-                report_name = "secdojo_report.sarif"
+                report_name = "secdojo_c_report.sarif"
                 with open(report_name, "w") as f_out:
                     json.dump(sarif_results, f_out, indent=2)
                 print(f"{GREEN}[OK] SARIF report saved to: {os.path.abspath(report_name)}{RESET}")
