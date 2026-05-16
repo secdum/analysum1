@@ -1,7 +1,8 @@
+# sarif_exporter.py
 import json
 from collections import defaultdict
 from typing import List
-from models import Finding
+from secdojo.models import Finding
 
 def export_to_sarif(findings: List[Finding], output_path: str = "rust_report.sarif") -> None:
     """

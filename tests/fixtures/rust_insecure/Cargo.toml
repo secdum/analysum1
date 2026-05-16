@@ -1,8 +1,0 @@
-[package]
-name = "rust_vulnerable_test"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-# Versão com CVE conhecido (RUSTSEC-2019-0031) para efeitos de teste
-spin = "0.5.2"

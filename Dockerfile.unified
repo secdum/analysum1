@@ -1,0 +1,55 @@
+# To run this Dockerfile, you need to have Docker installed on your system.
+# Build the image:
+#
+# docker build -f Dockerfile.unified -t secdojo-scanner .
+#
+# To run the unified environment and test the CLI inside it:
+#
+# docker run -it --rm secdojo-scanner
+
+FROM ubuntu:22.04
+
+LABEL description="Unified container for SecDojo Scanner (C, Rust, Python CLI)"
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# 1. System dependencies and C tools
+RUN apt-get update && apt-get install -y \
+    curl \
+    ca-certificates \
+    git \
+    python3 \
+    python3-pip \
+    libssl-dev \
+    pkg-config \
+    build-essential \
+    cppcheck \
+    flawfinder \
+    && rm -rf /var/lib/apt/lists/*
+
+# 2. Universal tools (Semgrep)
+RUN pip3 install semgrep
+
+# 3. Rust toolchain and tools
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+RUN rustup component add clippy
+RUN cargo install cargo-audit
+RUN cargo install cargo-geiger
+
+# 4. Verify installations
+RUN cppcheck --version && \
+    flawfinder --version && \
+    semgrep --version && \
+    cargo --version && \
+    cargo clippy --version && \
+    cargo audit --version && \
+    cargo geiger --version
+
+# 5. Set up working directory and copy the orchestrator
+WORKDIR /app
+COPY . /app
+
+# The default command can be the CLI, or just bash
+CMD ["python3", "secdojo/secdojo_scan.py"]
