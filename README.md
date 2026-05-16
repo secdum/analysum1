@@ -19,8 +19,8 @@
     <a href="https://github.com/your-username/your-repo/actions">
       <img src="https://img.shields.io/badge/build-passing-success.svg" alt="Build Status">
     </a>
-    <a href="https://opensource.org/licenses/MIT">
-      <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License: MIT">
+    <a href="https://opensource.org/licenses/Apache-2.0">
+      <img src="https://img.shields.io/badge/License-Apache_2.0-green.svg" alt="License: Apache 2.0">
     </a>
     <a href="https://github.com/your-username/your-repo/pulls">
       <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome">

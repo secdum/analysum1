@@ -3,78 +3,64 @@ name: Upload Evidence to Release
 on:
   push:
     tags:
-      - 'v*'
+      - 'v*' # Runs only when a tag is pushed (e.g. v1.0.0, v1.1)
 
 jobs:
   release-evidence:
     name: Generate and Upload Artifacts
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write # Required to create the Release and attach files
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build Unified Docker Image
-        run: |
-          docker build -f Dockerfile.unified -t secdojo-scanner:release .
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
 
-      - name: Create output directory
-        run: mkdir -p evidence
+      - name: Create evidence directory
+        # Local folder mounted into the container via volume (-v)
+        # Anything the scanner writes to /workspace lands here on the host
+        run: mkdir -p ${{ github.workspace }}/evidence
 
-      # Run C scan inside the Docker container (where tools are installed)
-      - name: Run C Scan
+      - name: Build scanner image
+        # Builds the image with all required tools (cargo-audit, geiger, cppcheck...)
+        run: docker build -f Dockerfile.unified -t secdojo-scanner:release .
+
+      - name: Run SecDojo Scanners
+        # Runs the scanner inside the container with the workspace mounted
+        # --lang all = Rust + C, --path /workspace = points to the repo root
         run: |
-          set +e
           docker run --rm \
-            -v ${{ github.workspace }}/evidence:/output \
+            --user "$(id -u):$(id -g)" \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
             secdojo-scanner:release \
-            bash -c 'python3 scanners/C/c_scan.py examples/c_vun_codes > /output/c_scan_results.sarif.json 2>/dev/null'
-          echo "C scan finished with exit code $?"
-          set -e
-        continue-on-error: true
+            python3 secdojo/secdojo_scan.py --lang all --path /workspace
 
-      # Run Rust scan inside the Docker container
-      - name: Run Rust Scan
+      - name: Collect all outputs into evidence/
+        # Finds all .sarif and .json files produced by the scanner anywhere
+        # in the workspace and copies them into evidence/ for archiving
         run: |
-          set +e
-          docker run --rm \
-            -v ${{ github.workspace }}/evidence:/output \
-            secdojo-scanner:release \
-            bash -c 'cd examples/rust_insecure && cargo generate-lockfile 2>/dev/null; cd /app && python3 secdojo/secdojo_scan.py --lang rust --path examples/rust_insecure > /output/rust_scan_output.txt 2>&1'
-          echo "Rust scan finished with exit code $?"
-          set -e
-        continue-on-error: true
-
-      # Run the unified CLI scan
-      - name: Run Unified Scan
-        run: |
-          set +e
-          docker run --rm \
-            -v ${{ github.workspace }}/evidence:/output \
-            secdojo-scanner:release \
-            bash -c 'python3 secdojo/secdojo_scan.py --lang all --path examples/ > /output/unified_scan_output.txt 2>&1'
-          echo "Unified scan finished with exit code $?"
-          set -e
-        continue-on-error: true
-
-      - name: List generated evidence
-        run: |
-          echo "=== Evidence files ==="
-          ls -la evidence/
-          echo ""
-          for f in evidence/*; do
-            echo "--- $f (first 20 lines) ---"
-            head -20 "$f" 2>/dev/null || true
-          done
+          find ${{ github.workspace }} \
+            -maxdepth 4 \
+            \( -name "*.sarif" -o -name "*.json" \) \
+            ! -path "*/evidence/*" \
+            ! -path "*/.git/*" \
+            ! -path "*/node_modules/*" \
+            -exec cp {} ${{ github.workspace }}/evidence/ \;
+          echo "=== Collected files ==="
+          ls -lh ${{ github.workspace }}/evidence/
 
       - name: Zip evidence
-        run: |
-          cd evidence
-          zip -r ../evidence.zip . || true
+        # Compresses all collected outputs into a single archive for the Release
+        run: zip -r evidence.zip evidence/
 
-      - name: Create Release and Attach Evidence
+      - name: Create Release and attach evidence
+        # Creates the GitHub Release named after the tag and attaches evidence.zip
         uses: softprops/action-gh-release@v2
         with:
           files: evidence.zip

@@ -63,10 +63,13 @@ def run_cppcheck(target: str, max_workers: int = 4, timeout_per_dir: int = 600) 
         for future in as_completed(futures):
             try:
                 xml_chunk = future.result()
-                if xml_chunk.strip():
-                    root = ET.fromstring(xml_chunk)  # nosec B314
-                    for error in root.iter("error"):
-                        all_errors.append(ET.tostring(error, encoding="unicode"))
+                if xml_chunk and xml_chunk.strip() and "<" in xml_chunk:
+                    try:
+                        root = ET.fromstring(xml_chunk) 
+                        for error in root.iter("error"):
+                            all_errors.append(ET.tostring(error, encoding="unicode"))
+                    except ET.ParseError as xml_err:
+                        print(f"[DEBUG] Cppcheck devolveu texto não-XML num pedaço: {xml_err}", file=sys.stderr)
             except Exception as exc:
                 print(f"[WARN] Falha: {exc}", file=sys.stderr)
 
