@@ -2,5 +2,7 @@
 **/.DS_Store
 target/
 .git/
+GnuPG/
+Gpg4win/
 __pycache__/
 .vscode/
