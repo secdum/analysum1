@@ -10,7 +10,7 @@ jobs:
     name: Generate and Upload Artifacts
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write # Required to create the Release and attach files
 
     steps:
       - name: Checkout repository
