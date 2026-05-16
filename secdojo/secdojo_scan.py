@@ -97,7 +97,7 @@ def wizard():
 
     if not path:
         print(f"\n{RED}Error: Path cannot be empty.{RESET}")
-        sys.exit(1)
+        sys.exit(2)
 
     return lang, path
 
@@ -265,7 +265,7 @@ def main():
         if not lang or not path:
             print(f"{RED}Error: When using CLI arguments, both --lang and --path are required.{RESET}")
             parser.print_help()
-            sys.exit(1)
+            sys.exit(2)
 
     while True:
         print("\n")
@@ -281,7 +281,7 @@ def main():
         path = os.path.abspath(path)
         if not os.path.exists(path):
             print(f"{RED}[ERROR] The path '{path}' does not exist.{RESET}")
-            sys.exit(1)
+            sys.exit(2)
 
         all_findings = []
         had_errors = False
