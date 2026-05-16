@@ -8,8 +8,8 @@ We currently provide security updates for the following versions of SecDojo Scan
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 1.x.x   | ✅ Yes              |
-| < 1.0   | ❌ No (Deprecated)  |
+| 1.x.x   | Yes              |
+| < 1.0   | No (Deprecated)  |
 
 *Note: As an orchestrator, we also rely on the security of the underlying tools (Cppcheck, Flawfinder, Semgrep, Cargo-audit, etc.). We highly recommend keeping your local toolchains and Docker images up to date.*
 
@@ -23,7 +23,7 @@ Please note the distinction between vulnerabilities in **SecDojo Scanner** itsel
 
 ## Reporting a Vulnerability
 
-**🛑 PLEASE DO NOT CREATE A PUBLIC ISSUE FOR SECURITY VULNERABILITIES.**
+**PLEASE DO NOT CREATE A PUBLIC ISSUE FOR SECURITY VULNERABILITIES.**
 
 If you discover a security vulnerability within SecDojo Scanner, please follow these steps:
 

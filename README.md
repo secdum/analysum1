@@ -35,15 +35,15 @@
   </p>
 </div>
 
-## 📋 Table of Contents
+## Table of Contents
 
-- [📖 Description](#-description)
+- [Description](#description)
   - [The Problem: Tool Fragmentation](#the-problem-tool-fragmentation)
   - [The Solution: A Unified Approach](#the-solution-a-unified-approach)
-- [✨ Features](#-features)
-- [🚀 Technologies](#-technologies)
-- [⚙️ Prerequisites](#️-prerequisites)
-- [💻 Installation](#-installation)
+- [Features](#features)
+- [Technologies](#technologies)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
   - [Option 1: Native Installation (Windows)](#option-1-native-installation-windows)
   - [Option 2: Native Installation (Ubuntu / Debian)](#option-2-native-installation-ubuntu--debian)
   - [Option 3: Native Installation (macOS)](#option-3-native-installation-macos)
@@ -51,22 +51,22 @@
   - [Option 5: Docker — Unified Image (Recommended for Local Use)](#option-5-docker--unified-image-recommended-for-local-use)
   - [Verifying Your Installation](#verifying-your-installation)
   - [Known Installation Gotchas](#known-installation-gotchas)
-- [🛠️ Usage](#️-usage)
-  - [🧙‍♂️ Interactive Mode (Wizard)](#️-interactive-mode-wizard)
-  - [⚡ Direct CLI (Recommended for CI/CD)](#-direct-cli-recommended-for-cicd)
-  - [📄 Where Does the Output Go?](#-where-does-the-output-go)
-- [🧪 Tests & Fixtures](#-tests--fixtures)
+- [Usage](#usage)
+  - [Interactive Mode (Wizard)](#interactive-mode-wizard)
+  - [Direct CLI (Recommended for CI/CD)](#direct-cli-recommended-for-cicd)
+  - [Where Does the Output Go?](#where-does-the-output-go)
+- [Tests & Fixtures](#tests--fixtures)
   - [Testing the Rust Pipeline](#testing-the-rust-pipeline)
   - [Testing the C Pipeline](#testing-the-c-pipeline)
-- [🤝 Contributing](#-contributing)
+- [Contributing](#contributing)
   - [Quick Workflow (External Contributors)](#quick-workflow-external-contributors)
   - [Quick Workflow (Internal Contributors)](#quick-workflow-internal-contributors)
-  - [🛑 Pull Request Requirements](#-pull-request-requirements)
-  - [🛡️ Ethics and Responsible Disclosure](#️-ethics-and-responsible-disclosure)
-- [📄 License](#-license)
-- [📫 Authors & Contact](#-authors--contact)
+  - [Pull Request Requirements](#pull-request-requirements)
+  - [Ethics and Responsible Disclosure](#ethics-and-responsible-disclosure)
+- [License](#license)
+- [Authors & Contact](#authors--contact)
 
-## 📖 Description
+## Description
 
 **SecDojo Scanner** (`secdojo-scan`) is a unified static analysis CLI orchestrator that aggregates best-in-class security tools for **C/C++** and **Rust** codebases into a single workflow. 
 
@@ -84,7 +84,7 @@ The orchestrator solves fragmentation by:
 
 By consolidating the output, SecDojo Scanner delivers the analytical depth of individual scanners via a format that is immediately ready to be consumed by CI/CD pipelines, security dashboards, and GitHub Code Scanning.
 
-## ✨ Features
+## Features
 
 - **Unified Polyglot Scanning:** Audit both **C/C++** and **Rust** codebases with a single CLI command (`--lang all`). No need to orchestrate multiple tools manually.
 - **Intelligent Normalization:** Automatically parses heterogeneous tool outputs (XML, JSON, CSV, text) into a single, standardized internal data model.
@@ -95,7 +95,7 @@ By consolidating the output, SecDojo Scanner delivers the analytical depth of in
 - **Extensible Architecture:** A highly modular design that strictly separates runners (I/O) from parsers (pure functions), making it trivial to plug in new security tools or languages.
 - **Interactive Wizard Mode:** Includes a zero-configuration, interactive CLI wizard for easy onboarding and local developer testing.
 
-## 🚀 Technologies
+## Technologies
 
 SecDojo Scanner acts as a unified orchestrator leveraging several industry-standard tools:
 
@@ -112,7 +112,7 @@ SecDojo Scanner acts as a unified orchestrator leveraging several industry-stand
 
 * **Infrastructure:** [Docker](https://www.docker.com/)
 
-## ⚙️ Prerequisites
+## Prerequisites
 
 You only need to install the toolchains for the languages you intend to scan. If you are using Docker (recommended), you only need Git and Docker installed on your host machine.
 
@@ -131,7 +131,7 @@ You only need to install the toolchains for the languages you intend to scan. If
 | **Rust** | rustc, cargo, cargo-audit, cargo-geiger, clippy | 1.70+ (Rust stable) |
 
 
-## 💻 Installation
+## Installation
 
 There are several ways to run SecDojo Scanner: via **Docker** (recommended for reproducibility and zero host-pollution) or via **Native Installation**.
 
@@ -357,18 +357,18 @@ python secdojo/secdojo_scan.py --lang c --path examples/c_vun_codes
 | Docker volume mount fails | Windows | Path format differences | Use `${PWD}` in PowerShell, not `$(pwd)` |
 
 
-## 🛠️ Usage
+## Usage
 
 This guide takes you from a clean clone to your first scan report in under five minutes. You can run SecDojo Scanner in two ways: through an interactive wizard or directly via CLI flags.
 
-### 🧙‍♂️ Interactive Mode (Wizard)
+### Interactive Mode (Wizard)
 If you run the scanner without any arguments, it drops you into a guided wizard. It will prompt you to select the language and the repository path. This is perfect for first-time users and demos:
 
 ```bash
 python3 secdojo/secdojo_scan.py
 ```
 
-### ⚡ Direct CLI (Recommended for CI/CD)
+### Direct CLI (Recommended for CI/CD)
 Once you understand the flags, the direct CLI is much faster and suitable for automation.
 
 Scan a Rust Project:
@@ -390,7 +390,7 @@ Runs the C and Rust pipelines sequentially and aggregates findings into a single
 python3 secdojo/secdojo_scan.py --lang all --path ./my_monorepo
 ```
 
-### 📄 Where Does the Output Go?
+### Where Does the Output Go?
 
 #### 1. Console (Default): Findings are printed to stdout in a human-readable, colorized format, showing severity, tool, type, message, and location.
 
@@ -405,7 +405,7 @@ jq '.runs[].results[] | select(.level=="error") | .message.text' report.sarif
 ```
 Tip: You can visualize the SARIF file by dropping it into the Microsoft SARIF Viewer Web or uploading it to GitHub's Security tab.
 
-## 🧪 Tests & Fixtures
+## Tests & Fixtures
 
 The repository ships with deliberately vulnerable code fixtures. This allows you to verify your installation, test the parsers, and see how the scanner behaves without needing to scan a real project first.
 
@@ -430,7 +430,7 @@ python3 secdojo/secdojo_scan.py --lang c --path examples/c_vun_codes
 What to expect: You should see findings from Flawfinder (flagging functions like strcpy and gets) and Cppcheck (flagging memory leaks and null pointer dereferences). The script will exit with code 1.
 
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**. 
 
@@ -488,23 +488,23 @@ If you don't have write access to the repository, you'll need to fork it first.
 5. **Push and PR:** Push your branch and open a Pull Request against the `develop` branch.
 
 
-### 🛑 Pull Request Requirements
+### Pull Request Requirements
 Before your PR can be merged into develop, it must meet the following criteria:
 
 - **Code Review:** At least one approval from a team member.
 - **Validation Proof:** Attach a screenshot or log output (e.g., the generated JSON/SARIF file) directly in the PR description.
 - **CI & Tests:** GitHub Actions must pass (Docker builds, smoke tests), and it must run successfully against the local fixtures.
 
-### 🛡️ Ethics and Responsible Disclosure
+### Ethics and Responsible Disclosure
 SecDojo Scanner is a security tool. If, while testing the scanner against real-world repositories (e.g., curl, openssl), you discover a critical vulnerability or exposed secrets:
 
 1. **Do NOT publish the details in our public README, PRs, or open issues.**
 2. **Consult the SECURITY.md file of the affected target repository.**
 3. **Inform the group privately so we can proceed with a responsible disclosure process.**
 
-#### 📖 Note: For the complete and detailed guidelines, please read our full [Contributing Guide](docs/CONTRIBUTING.md).
+#### Note: For the complete and detailed guidelines, please read our full [Contributing Guide](docs/CONTRIBUTING.md).
 
-## 📄 License
+## License
 
 This project is open-source and distributed under the **Apache License, Version 2.0** (January 2004).
 
@@ -515,18 +515,18 @@ You are free to use, modify, distribute, and use this software for commercial pu
 
 For more details, please see the full [LICENSE](LICENSE) file in this repository or visit the official [Apache 2.0 License page](https://www.apache.org/licenses/LICENSE-2.0).
 
-## 📫 Authors & Contact
+## Authors & Contact
 
 **SecDojo Scanner** was developed and is maintained by our team. If you have any questions, feedback, or just want to connect, feel free to reach out to any of us:
 
 *   **Diogo Rodrigues**
-    *   📧 Email: [pg60244@alunos.uminho.pt](mailto:pg60244@alunos.uminho.pt)
-    *   💼 LinkedIn: [https://www.linkedin.com/in/diogo--rodrigues](https://www.linkedin.com/in/diogo--rodrigues)
+    *   Email: [pg60244@alunos.uminho.pt](mailto:pg60244@alunos.uminho.pt)
+    *   LinkedIn: [https://www.linkedin.com/in/diogo--rodrigues](https://www.linkedin.com/in/diogo--rodrigues)
 
 *   **[Matilde Oliveira]**
-    *   📧 Email: [pg60283@alunos.uminho.pt](mailto:pg60283@alunos.uminho.pt)
-    *   💼 LinkedIn: [https://www.linkedin.com/in/matildeoliveira0/](https://www.linkedin.com/in/matildeoliveira0/)
+    *   Email: [pg60283@alunos.uminho.pt](mailto:pg60283@alunos.uminho.pt)
+    *   LinkedIn: [https://www.linkedin.com/in/matildeoliveira0/](https://www.linkedin.com/in/matildeoliveira0/)
 
 *   **[Tiago Teixeira]**
-    *   📧 Email: [pg58716@alunos.uminho.pt](mailto:pg58716@alunos.uminho.pt)
-    *   💼 LinkedIn: [https://www.linkedin.com/in/tiago-teixeira-1b03ab32a/](https://www.linkedin.com/in/tiago-teixeira-1b03ab32a/)
+    *   Email: [pg58716@alunos.uminho.pt](mailto:pg58716@alunos.uminho.pt)
+    *   LinkedIn: [https://www.linkedin.com/in/tiago-teixeira-1b03ab32a/](https://www.linkedin.com/in/tiago-teixeira-1b03ab32a/)
