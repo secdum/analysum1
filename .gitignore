@@ -8,4 +8,5 @@ __pycache__/
 *.sarif 
 secdojo_report.sarif
 report.json
+exemplos/
 .vscode/
