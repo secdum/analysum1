@@ -16,7 +16,7 @@ def parse_cppcheck(xml_output: str) -> list[dict]:
     if not xml_output.strip():
         return results
     try:
-        root = ET.fromstring(xml_output)  # nosec B314
+        root = ET.fromstring(xml_output) 
     except ET.ParseError as exc:
         print(f"[WARN] Invalid cppcheck XML: {exc}", file=sys.stderr)
         return results
