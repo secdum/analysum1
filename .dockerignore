@@ -1,0 +1,30 @@
+# Git
+.git/
+.github/
+
+# Windows binaries (accidentally committed)
+GnuPG/
+Gpg4win/
+
+# Python caches
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# IDE
+.vscode/
+
+# Generated outputs
+*.sarif
+rust_wrapper_results.sarif
+
+# Docker (avoid recursive copies)
+Dockerfile
+Dockerfile.*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Research raw outputs (large, not needed in container)
+research/*/outputs/
