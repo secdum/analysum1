@@ -5,4 +5,10 @@ target/
 GnuPG/
 Gpg4win/
 __pycache__/
+*.sarif 
+secdojo_report.sarif
+report.json
+secdojo_rust_report.sarif
+.pytest_cache/
+exemplos/
 .vscode/

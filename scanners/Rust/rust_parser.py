@@ -51,7 +51,16 @@ def parse_audit(audit_result: dict[str, Any]) -> list[Finding]:
         # Pull the first category tag (e.g. "memory-corruption", "denial-of-service")
         categories = advisory.get("categories") or []
         vuln_type  = categories[0] if categories else "vulnerability"
- 
+        cwe_data = advisory.get("cwe") or advisory.get("cwes")
+        cwe = None
+        if isinstance(cwe_data, list) and cwe_data:
+            cwe = str(cwe_data[0]).upper()
+        elif cwe_data:
+            cwe = str(cwe_data).upper()
+        else:
+            keywords = advisory.get("keywords") or []
+            cwe = next((kw.upper() for kw in keywords if kw.lower().startswith("cwe-")), None)
+        level = _cvss_to_level(cvss) if cvss else "error"
         findings.append(Finding(
             tool="cargo-audit",
             type=vuln_type,
@@ -63,26 +72,35 @@ def parse_audit(audit_result: dict[str, Any]) -> list[Finding]:
             ),
             file="Cargo.lock",
             line=0,
+            cwe=cwe
         ))
  
     # --- Unmaintained crate warnings ---
-    for warning in parsed.get("warnings", {}).get("unmaintained", []):
-        advisory = warning.get("advisory", {})
-        package  = warning.get("package", {})
- 
-        findings.append(Finding(
-            tool="cargo-audit",
-            type="unmaintained",
-            severity="warning",   # unmaintained is a risk, not an active exploit → warning
-            message=(
-                f"[{advisory.get('id', 'UNKNOWN')}] "
-                f"Unmaintained crate: {package.get('name', '?')} {package.get('version', '?')}. "
-                f"{advisory.get('url', '')}"
-            ),
-            file="Cargo.lock",
-            line=0,
-        ))
- 
+    warnings_dict = parsed.get("warnings", {})
+    for category, warning_list in warnings_dict.items():
+        for item in warning_list:
+            advisory = item.get("advisory", {})
+            package = item.get("package", {})
+            cwe_data = advisory.get("cwe") or advisory.get("cwes")
+            cwe = None
+            if isinstance(cwe_data, list) and cwe_data:
+                cwe = str(cwe_data[0]).upper()
+            elif cwe_data:
+                cwe = str(cwe_data).upper()
+            else:
+                keywords = advisory.get("keywords") or []
+                cwe = next((kw.upper() for kw in keywords if kw.lower().startswith("cwe-")), None)
+        
+            findings.append(Finding(
+                tool="cargo-audit",
+                type=advisory.get("id", "Warning"),
+                message=f"Crate '{package.get('name')}' is {category}: {advisory.get('title')}",
+                file="Cargo.lock",  
+                line=0,
+                severity="warning" if category in ("unmaintained", "unsound") else "error",
+                cwe=cwe
+            ))
+            
     return findings
 
 def parse_geiger(geiger_result: dict[str, Any]) -> list[Finding]:
@@ -119,7 +137,7 @@ def parse_geiger(geiger_result: dict[str, Any]) -> list[Finding]:
         if total_unsafe == 0:
             continue
 
-        severity = "HIGH" if total_unsafe > 50 else "MEDIUM" if total_unsafe > 10 else "LOW"
+        level = "error" if total_unsafe > 50 else "warning" if total_unsafe > 10 else "note"
 
         findings.append(Finding(
             tool="cargo-geiger",
@@ -157,7 +175,7 @@ def parse_clippy(clippy_result: dict[str, Any]) -> list[Finding]:
         if level not in ("warning", "error"):
             continue
 
-        severity = _SEVERITY_MAP.get(level, "MEDIUM")
+        severity = "error" if level == "error" else "warning"
         lint_code = diag.get("code", {}).get("code", "unknown")
 
         spans = diag.get("spans", [])

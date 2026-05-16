@@ -23,7 +23,8 @@ def _run(cmd: list[str], cwd: str | None = None, timeout: int | None = None) -> 
 def run_cppcheck_on_dir(directory: str, timeout: int = 300) -> str:
     stdout, stderr, _ = _run([
         "cppcheck", "--xml", "--xml-version=2",
-        "--enable=warning,style,performance,portability",
+        "--enable=all",
+        "--inconclusive",
         "--force", "--suppress=missingIncludeSystem", "--max-ctu-depth=0", directory
     ], timeout=timeout)
     xml_content = stderr.strip().lstrip("\ufeff")
@@ -55,7 +56,7 @@ def run_cppcheck(target: str, max_workers: int = 4, timeout_per_dir: int = 600) 
     if not subdirs:
         return run_cppcheck_on_dir(target, timeout=timeout_per_dir)
 
-    effective_workers = min(len(subdirs), os.cpu_count() or max_workers)
+    effective_workers = min(len(subdirs), max_workers, os.cpu_count() or max_workers)
     all_errors = []
 
     with ThreadPoolExecutor(max_workers=effective_workers) as executor:

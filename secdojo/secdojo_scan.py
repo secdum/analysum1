@@ -9,6 +9,7 @@ from collections import defaultdict
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from scanners.Rust.rust_scan import scan_raw
 from scanners.Rust.rust_parser import parse_all_rust
+from scanners.Rust.rust_sarif import export_to_sarif
 from scanners.C.c_scan import scan_c
 from secdojo.models import Finding
 
@@ -95,7 +96,7 @@ def wizard():
 
     if not path:
         print(f"\n{RED}Error: Path cannot be empty.{RESET}")
-        sys.exit(1)
+        sys.exit(2)
 
     return lang, path
 
@@ -167,6 +168,77 @@ def print_results(all_findings, had_errors):
             print("-" * 50)
         print()
 
+def save_results(filepath, all_findings, lang, path):
+    """
+    Saves scan results to a file.
+    - .json  → structured JSON
+    - .txt   → plain text (colors stripped)
+    """
+    if filepath.endswith(".json"):
+        results = []
+        for f in all_findings:
+            results.append({
+                "tool": f.tool,
+                "type": f.type,
+                "severity": f.severity,
+                "message": f.message,
+                "file": f.file,
+                "line": f.line,
+                "cwe": getattr(f, 'cwe', None)
+            })
+        report = {
+            "scan": {
+                "language": lang,
+                "target": path,
+                "total_findings": len(all_findings),
+            },
+            "findings": results
+        }
+        with open(filepath, "w") as f:
+            json.dump(report, f, indent=2)
+    else:
+        # .txt or any other extension → plain text
+        lines = []
+        lines.append("=" * 50)
+        lines.append("  SecDojo Scanner - Results")
+        lines.append(f"  Language: {lang.capitalize()}")
+        lines.append(f"  Target:   {path}")
+        lines.append("=" * 50)
+        lines.append("")
+
+        counts = {"error": 0, "warning": 0, "note": 0}
+        for f in all_findings:
+            level = f.severity if f.severity in counts else "warning"
+            counts[level] += 1
+
+        lines.append("  Summary")
+        if counts["error"]:
+            lines.append(f"    Errors   : {counts['error']}")
+        if counts["warning"]:
+            lines.append(f"    Warnings : {counts['warning']}")
+        if counts["note"]:
+            lines.append(f"    Notes    : {counts['note']}")
+        lines.append(f"    Total    : {len(all_findings)}")
+        lines.append("")
+
+        grouped = defaultdict(list)
+        for f in all_findings:
+            grouped[f.tool].append(f)
+
+        for tool, tool_findings in grouped.items():
+            lines.append(f"[ {tool} — {len(tool_findings)} finding(s) ]")
+            lines.append("=" * 50)
+            for f in tool_findings:
+                lines.append(f"[{f.severity}] {f.tool} ({f.type})")
+                lines.append(f"    {f.message}")
+                lines.append(f"    Location: {f.file}:{f.line}")
+                lines.append("-" * 50)
+            lines.append("")
+
+        with open(filepath, "w") as f:
+            f.write("\n".join(lines))
+
+    print(f"{GREEN}[OK] Results saved to: {os.path.abspath(filepath)}{RESET}")
 
 def main():
     parser = argparse.ArgumentParser(
@@ -176,20 +248,23 @@ def main():
 
     parser.add_argument("--lang", choices=["rust", "c", "all"], help="Language to analyze: 'rust', 'c', or 'all'")
     parser.add_argument("--path", type=str, help="Path to the repository to scan")
+    parser.add_argument("--output", type=str, help="Save results to file (strips colors). Supports .txt, .json, .sarif")
 
     # If no arguments are passed, start the interactive wizard
     if len(sys.argv) == 1:
         print_banner()
         lang, path = wizard()
+        output_file = None
     else:
         args = parser.parse_args()
         lang = args.lang
         path = args.path
+        output_file = getattr(args, 'output', None)
 
         if not lang or not path:
             print(f"{RED}Error: When using CLI arguments, both --lang and --path are required.{RESET}")
             parser.print_help()
-            sys.exit(1)
+            sys.exit(2)
 
     while True:
         print("\n")
@@ -205,7 +280,7 @@ def main():
         path = os.path.abspath(path)
         if not os.path.exists(path):
             print(f"{RED}[ERROR] The path '{path}' does not exist.{RESET}")
-            sys.exit(1)
+            sys.exit(2)
 
         all_findings = []
         had_errors = False
@@ -214,10 +289,24 @@ def main():
             print(f"\n{CYAN}[*] Starting Rust Analysis...{RESET}")
             try:
                 raw_results = scan_raw(path)
-                print(f"\n[DEBUG] Error Audit: {raw_results['audit'].get('error')}")
-                print(f"[DEBUG] Error Geiger: {raw_results['geiger'].get('error')}\n")
+                
+                audit_error = raw_results.get("audit", {}).get("error")
+                geiger_error = raw_results.get("geiger", {}).get("error")
+                clippy_error = raw_results.get("clippy", {}).get("error")
+                if audit_error:
+                    print(f"[ERROR] cargo-audit error: {audit_error}{RESET}")
+                if geiger_error:
+                    print(f"[ERROR] cargo-geiger error: {geiger_error}{RESET}") 
+                if clippy_error:
+                    print(f"[ERROR] cargo-clippy error: {clippy_error}{RESET}")
+
                 rust_findings = parse_all_rust(raw_results)
                 all_findings.extend(rust_findings)
+
+                rust_report = "secdojo_rust_report.sarif"
+                export_to_sarif(rust_findings, rust_report)
+                print(f"{GREEN}[OK] Rust SARIF report saved to: {os.path.abspath(rust_report)}{RESET}")
+
                 print(f"{GREEN}[OK] Rust analysis completed!{RESET}")
             except Exception as e:
                 print(f"{RED}[ERROR] Rust scan failed: {e}{RESET}")
@@ -230,7 +319,7 @@ def main():
                 sarif_results = scan_c(path)
 
                 # Save the SARIF report to disk
-                report_name = "secdojo_report.sarif"
+                report_name = "secdojo_c_report.sarif"
                 with open(report_name, "w") as f_out:
                     json.dump(sarif_results, f_out, indent=2)
                 print(f"{GREEN}[OK] SARIF report saved to: {os.path.abspath(report_name)}{RESET}")
@@ -244,6 +333,8 @@ def main():
 
         # Print summary + grouped findings
         print_results(all_findings, had_errors)
+        if output_file:
+            save_results(output_file, all_findings, lang, path)
 
         # Post-scan prompt (skipped in CI/CD non-interactive mode)
         if sys.stdin.isatty():
@@ -260,8 +351,14 @@ def main():
                 sys.exit(0)
 
             lang, path = wizard()
+            output_file = None
         else:
-            # Non-interactive mode (CI/CD) — exit after one scan
+            # Non-interactive mode (CI/CD) — exit with meaningful code
+            if had_errors:
+                sys.exit(2)
+            elif all_findings:
+                sys.exit(1)
+            sys.exit(0)
             break
 
 

@@ -105,7 +105,7 @@ cppcheck [FLAGS] <source-file-or-directory>
 |------|-------------|
 | `--enable=<checks>` | Enables categories such as warning, style, performance, portability, information, or all |
 | `--xml` | Writes results in XML format to stderr |
-| `--output-file=<file>` | Selects the XML output version. Commonly used with --xml-version=2 |
+| `--output-file=<file>` | Defines the filename and path (e.g., report.xml). It doesn't affect the internal version of the XML|
 | `--suppress=<id>` | Suppresses a specific warning or message id |
 | `--inconclusive` | Includes findings that are possible but not certain; may increase false positives |
 | `--platform=<platform>` | Sets the target platform model, e.g. Unix or Windows, improving type-size assumptions |

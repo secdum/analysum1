@@ -7,11 +7,11 @@ import shutil
 from pathlib import Path
 from typing import Any
 
-# Configuração básica do logger para evitar erros
+
 logger = logging.getLogger(__name__)
 
 def _run(cmd: list[str], cwd: str | Path, timeout: int = 300) -> dict[str, Any]:
-    """Executa um comando no terminal e devolve o resultado bruto."""
+    
     result: dict[str, Any] = {
         "cmd": cmd,
         "returncode": -1,
@@ -52,8 +52,7 @@ def _check_tool(name: str) -> bool:
 
 def run_audit(project_path: str | Path, timeout: int = 120) -> dict[str, Any]:
     """Executa o cargo-audit e extrai o JSON bruto."""
-    available = _check_tool("cargo-audit") or _check_tool("cargo")
-    if not available:
+    if not _check_tool("cargo") or not _check_tool("cargo-audit"):
         return {"error": "cargo-audit not found", "parsed": None}
 
     cmd = ["cargo", "audit", "--json"]

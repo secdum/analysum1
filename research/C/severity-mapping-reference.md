@@ -2,21 +2,20 @@
 
 ## 1. Overview
 
-Este documento define o mapeamento entre os níveis de severidade específicos de cada ferramenta e o formato unificado usado no projeto `secdojo-scan`.
+This document defines the mapping between tool-specific severity levels and the unified format used in `secdojo-scan`.
+
+All findings are normalized to SARIF-style levels: `error`, `warning`, and `note`.
+This applies to both the Rust and C pipelines, ensuring consistent output across all tools.
 
 ---
 
 ## 2. Unified Severity Levels
 
-O formato unificado define 5 níveis de severidade (do mais grave ao menos grave):
-
-| Level | Priority | Description | Action Required |
-|-------|----------|-------------|-----------------|
-| **CRITICAL** | 4 | Vulnerabilidades confirmadas com impacto severo | Correção imediata |
-| **HIGH** | 3 | Problemas graves com alto potencial de exploração | Correção urgente |
-| **MEDIUM** | 2 | Problemas relevantes que requerem atenção | Correção planeada |
-| **LOW** | 1 | Problemas menores ou de qualidade de código | Correção opcional |
-| **INFO** | 0 | Informativo, sem impacto de segurança | Apenas conhecimento |
+| Level | Description | Action Required |
+|-------|-------------|-----------------|
+| **error** | Confirmed vulnerabilities, memory corruption, unsound code | Fix immediately |
+| **warning** | Probable issues, unmaintained crates, unsafe patterns | Fix planned |
+| **note** | Informational, low-risk suggestions, style issues | Awareness only |
 
 ---
 
@@ -24,45 +23,43 @@ O formato unificado define 5 níveis de severidade (do mais grave ao menos grave
 
 ### 3.1 Native Severity Levels
 
-Cppcheck usa os seguintes níveis:
-
 | Cppcheck Severity | Description |
 |-------------------|-------------|
-| `error` | Bugs definitivos, comportamento undefined |
-| `warning` | Problemas prováveis que podem causar bugs |
-| `style` | Problemas de estilo de código |
-| `performance` | Sugestões de otimização de performance |
-| `portability` | Problemas de portabilidade entre plataformas |
-| `information` | Mensagens informativas |
+| `error` | Definite bugs - undefined behaviour, null pointer deref, buffer overflow |
+| `warning` | Probable issues that may cause bugs |
+| `style` | Code style issues |
+| `performance` | Performance suggestions |
+| `portability` | Cross-platform portability issues |
+| `information` | Informational messages |
 
 ### 3.2 Mapping to Unified Format
 
 | Cppcheck | Unified | Rationale |
 |----------|---------|-----------|
-| `error` | **CRITICAL** | Bugs confirmados (null pointer deref, buffer overflow, use-after-free) |
-| `warning` | **MEDIUM** | Problemas prováveis mas não confirmados |
-| `style` | **LOW** | Não afeta segurança diretamente |
-| `performance` | **LOW** | Sem impacto de segurança |
-| `portability` | **LOW** | Sem impacto de segurança |
-| `information` | **INFO** | Apenas informativo |
+| `error` | **error** | Confirmed bugs with security impact |
+| `warning` | **warning** | Probable but unconfirmed issues |
+| `style` | **note** | No direct security impact |
+| `performance` | **note** | No security impact |
+| `portability` | **note** | No security impact |
+| `information` | **note** | Informational only |
 
 ### 3.3 Examples
 
 ```
-error (CRITICAL):
+error:
   - Null pointer dereference
   - Memory leak
   - Buffer overflow
   - Use after free
   - Array index out of bounds
 
-warning (MEDIUM):
+warning:
   - Uninitialized variable usage
   - Suspicious pointer arithmetic
   - Possible null pointer dereference
   - Unchecked return value
 
-style (LOW):
+note:
   - Variable naming conventions
   - Unused variables
   - Redundant code
@@ -74,7 +71,7 @@ style (LOW):
 
 ### 4.1 Native Risk Levels
 
-Flawfinder usa um sistema de 0-5 baseado no risco da função:
+Flawfinder uses a 0–5 numeric risk scale based on the danger of the function used:
 
 | Level | Description | Example Functions |
 |-------|-------------|-------------------|
@@ -89,37 +86,31 @@ Flawfinder usa um sistema de 0-5 baseado no risco da função:
 
 | Flawfinder Level | Unified | Rationale |
 |------------------|---------|-----------|
-| `5` | **CRITICAL** | Funções extremamente perigosas (buffer overflow garantido) |
-| `4` | **HIGH** | Funções perigosas se mal usadas |
-| `3` | **MEDIUM** | Funções potencialmente perigosas |
-| `2` | **LOW** | Baixo risco, contexto dependente |
-| `1` | **LOW** | Risco muito baixo |
-| `0` | **INFO** | Informativo |
+| `5` | **error** | Guaranteed buffer overflow - always dangerous |
+| `4` | **error** | Dangerous functions with no bounds checking |
+| `3` | **warning** | Potentially dangerous depending on context |
+| `2` | **warning** | Low risk, context-dependent |
+| `1` | **note** | Very low risk |
+| `0` | **note** | Informational |
 
 ### 4.3 Examples
 
 ```
-Level 5 (CRITICAL):
-  - gets() - No bounds checking, always vulnerable
-  - Direct use of dangerous functions
+error (levels 4–5):
+  - gets()         — no bounds checking, always vulnerable
+  - strcpy()       — no bounds checking
+  - strcat()       — no bounds checking
+  - sprintf()      — no bounds checking
+  - scanf("%s")    — no bounds checking
 
-Level 4 (HIGH):
-  - strcpy(dest, src) - No bounds checking
-  - strcat(dest, src) - No bounds checking
-  - sprintf(buf, fmt, ...) - No bounds checking
-  - scanf("%s", buf) - No bounds checking
+warning (levels 2–3):
+  - strlen()       — can be misused
+  - printf()       — format string risk if user-controlled
+  - access()       — race condition potential
 
-Level 3 (MEDIUM):
-  - strlen() - Can be used in vulnerable ways
-  - strcmp() - Timing attacks possible
-  - strtok() - Not thread-safe
-
-Level 2 (LOW):
-  - printf() with user-controlled format string
-  - access() - Race condition potential
-
-Level 1 (LOW):
+note (levels 0–1):
   - Minor coding issues
+  - Informational suggestions
 ```
 
 ---
@@ -128,81 +119,93 @@ Level 1 (LOW):
 
 ### 5.1 Native Severity Levels
 
-Semgrep usa 3 níveis base:
+| Semgrep Severity | Unified | Description |
+|------------------|---------|-------------|
+| `ERROR` | **error** | High-confidence security issues |
+| `WARNING` | **warning** | Medium-confidence issues (may be promoted based on CWE) |
+| `INFO` | **note** | Low-priority suggestions |
 
-| Semgrep Severity | SARIF Level | Description |
-|------------------|-------------|-------------|
-| `ERROR` | `error` | High confidence security issues |
-| `WARNING` | `warning` | Medium confidence issues |
-| `INFO` | `note` | Low priority suggestions |
+### 5.2 CWE-Based Promotion
 
-### 5.2 Base Mapping to Unified Format
-
-| Semgrep | Unified | Rationale |
-|---------|---------|-----------|
-| `ERROR` | **CRITICAL** | Vulnerabilidades confirmadas |
-| `WARNING` | **MEDIUM** | Problemas prováveis (pode subir para HIGH baseado em CWE) |
-| `INFO` | **LOW** | Sugestões e best practices |
-
-### 5.3 CWE-Based Refinement
-
-O nível unificado pode ser **aumentado** (nunca reduzido) baseado no CWE:
+A finding's level can be **promoted** (never demoted) based on its CWE tag:
 
 | CWE Category | Unified Override | Example CWEs |
 |--------------|------------------|--------------|
-| **Critical** | **CRITICAL** | CWE-78 (Command Injection), CWE-89 (SQL Injection), CWE-120 (Buffer Overflow), CWE-416 (Use-After-Free) |
-| **High** | **HIGH** | CWE-119 (Buffer Errors), CWE-190 (Integer Overflow), CWE-476 (NULL Deref) |
-| **Medium** | **MEDIUM** | CWE-252 (Unchecked Return), CWE-401 (Memory Leak) |
+| Critical | **error** | CWE-78, CWE-89, CWE-120, CWE-416 |
+| High | **error** | CWE-119, CWE-190, CWE-476, CWE-134, CWE-415 |
+| Medium | **warning** | CWE-252, CWE-401 |
 
-### 5.4 Examples
+### 5.3 Examples
 
 ```
-ERROR + CWE-78 (CRITICAL):
-  - system(user_input) - Command injection
-  - exec(user_controlled) - Code execution
+error:
+  - system(user_input)        — CWE-78 command injection
+  - strcpy without bounds     — CWE-120 buffer overflow
+  - use after free            — CWE-416
 
-WARNING + CWE-120 (upgrades to CRITICAL):
-  - Potential buffer overflow
-  - Unsafe string operations
+warning:
+  - unchecked return value    — CWE-252
+  - memory leak               — CWE-401
 
-WARNING without critical CWE (MEDIUM):
-  - Unchecked return value
-  - Resource leak
-
-INFO (LOW):
-  - Use safer alternatives
-  - Code quality suggestions
+note:
+  - use safer alternatives
+  - code quality suggestions
 ```
 
 ---
 
-## 6. CWE-Based Severity Override Table
+## 6. Cargo-Audit Severity Mapping
 
-Independente da ferramenta, alguns CWEs sempre mapeiam para severidades específicas:
+### 6.1 Vulnerability Advisories (with CVSS)
 
-### 6.1 Critical CWEs (Always CRITICAL)
+| CVSS Score | Unified |
+|------------|---------|
+| >= 7.0 | **error** |
+| >= 4.0 | **warning** |
+| < 4.0 | **note** |
+| No score | **error** (conservative fallback) |
 
-| CWE | Name | Why Critical |
-|-----|------|--------------|
-| CWE-78 | OS Command Injection | Remote code execution |
-| CWE-89 | SQL Injection | Database compromise |
-| CWE-120 | Buffer Copy without Checking Size | Memory corruption, RCE |
-| CWE-416 | Use After Free | Memory corruption, exploitation |
-| CWE-787 | Out-of-bounds Write | Memory corruption |
-| CWE-22 | Path Traversal | Arbitrary file access |
+### 6.2 Informational Warnings
 
-### 6.2 High CWEs (Always at least HIGH)
+| Advisory Kind | Unified | Rationale |
+|---------------|---------|-----------|
+| `unsound` | **error** | Memory-unsafe behaviour confirmed |
+| `unmaintained` | **warning** | No active CVE, but supply chain risk |
 
-| CWE | Name | Why High |
-|-----|------|----------|
-| CWE-119 | Buffer Errors | Potential memory corruption |
-| CWE-190 | Integer Overflow | Can lead to buffer overflow |
-| CWE-476 | NULL Pointer Dereference | Denial of service, potential exploitation |
-| CWE-134 | Format String Vulnerability | Information disclosure, RCE |
-| CWE-131 | Incorrect Buffer Size Calculation | Buffer overflow |
-| CWE-415 | Double Free | Memory corruption |
+---
 
-### 6.3 Medium CWEs
+## 7. Cargo-Geiger Severity Mapping
+
+Cargo-geiger counts unsafe code constructs per crate (functions, expressions, traits, impls, methods).
+
+| Unsafe Count | Unified | Rationale |
+|--------------|---------|-----------|
+| > 50 | **error** | High unsafe surface area |
+| > 10 | **warning** | Moderate unsafe usage |
+| <= 10 | **note** | Minimal unsafe usage |
+| 0 | *(skipped)* | Not reported |
+
+---
+
+## 8. CWE Reference Table
+
+### 8.1 CWEs that map to `error`
+
+| CWE | Name |
+|-----|------|
+| CWE-78 | OS Command Injection |
+| CWE-89 | SQL Injection |
+| CWE-120 | Buffer Copy without Checking Size |
+| CWE-416 | Use After Free |
+| CWE-787 | Out-of-bounds Write |
+| CWE-22 | Path Traversal |
+| CWE-119 | Buffer Errors |
+| CWE-190 | Integer Overflow |
+| CWE-476 | NULL Pointer Dereference |
+| CWE-134 | Format String Vulnerability |
+| CWE-415 | Double Free |
+
+### 8.2 CWEs that map to `warning`
 
 | CWE | Name |
 |-----|------|
