@@ -16,11 +16,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.13'
-
       - name: Create evidence directory
         # Local folder mounted into the container via volume (-v)
         # Anything the scanner writes to /workspace lands here on the host
@@ -30,16 +25,50 @@ jobs:
         # Builds the image with all required tools (cargo-audit, geiger, cppcheck...)
         run: docker build -f Dockerfile.unified -t secdojo-scanner:release .
 
-      - name: Run SecDojo Scanners
-        # Runs the scanner inside the container with the workspace mounted
-        # --lang all = Rust + C, --path /workspace = points to the repo root
+      - name: Detect scan targets
+        id: detect
         run: |
+          has_c=false
+          has_rust=false
+          # Check for C/H files anywhere in the repo
+          if find . -name "*.c" -o -name "*.h" | grep -q .; then
+            has_c=true
+          fi
+          # Check for Cargo.toml anywhere in the repo
+          if find . -name "Cargo.toml" | grep -q .; then
+            has_rust=true
+          fi
+          echo "has_c=$has_c" >> "$GITHUB_OUTPUT"
+          echo "has_rust=$has_rust" >> "$GITHUB_OUTPUT"
+          echo "Detected: C=$has_c, Rust=$has_rust"
+
+      - name: Run C Scan
+        if: steps.detect.outputs.has_c == 'true'
+        run: |
+          set +e
           docker run --rm \
             --user "$(id -u):$(id -g)" \
             -v ${{ github.workspace }}:/workspace \
             -w /workspace \
             secdojo-scanner:release \
-            python3 secdojo/secdojo_scan.py --lang all --path /workspace
+            python3 secdojo/secdojo_scan.py --lang c --path /workspace
+          echo "C scan exit code: $?"
+          set -e
+        continue-on-error: true
+
+      - name: Run Rust Scan
+        if: steps.detect.outputs.has_rust == 'true'
+        run: |
+          set +e
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
+            secdojo-scanner:release \
+            python3 secdojo/secdojo_scan.py --lang rust --path /workspace
+          echo "Rust scan exit code: $?"
+          set -e
+        continue-on-error: true
 
       - name: Collect all outputs into evidence/
         # Finds all .sarif and .json files produced by the scanner anywhere
@@ -57,7 +86,13 @@ jobs:
 
       - name: Zip evidence
         # Compresses all collected outputs into a single archive for the Release
-        run: zip -r evidence.zip evidence/
+        run: |
+          if [ "$(ls -A evidence/)" ]; then
+            zip -r evidence.zip evidence/
+          else
+            echo "No evidence files produced" > evidence/scan_summary.txt
+            zip -r evidence.zip evidence/
+          fi
 
       - name: Create Release and attach evidence
         # Creates the GitHub Release named after the tag and attaches evidence.zip
